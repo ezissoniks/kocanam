@@ -362,7 +362,7 @@ canvas {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-width: 25px;
+    min-width: 20px;
     min-height: 30px;
     color: var(--primary-color);
     text-decoration: none;
