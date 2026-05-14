@@ -1,9 +1,7 @@
 export const player = {
-  x: 4.00,
-  y: 1.01,
-  angle: -2.34,
-  moveSpeed: 0.02,
-  rotSpeed: 0.02,
+  x: 3.5,
+  y: 1,
+  angle: -1.5708,
   rotVelocity: 0,
   rotAccel: 0.001,
   rotFriction: 0.92,

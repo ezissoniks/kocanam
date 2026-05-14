@@ -1,52 +1,44 @@
 import { getAllSprites } from "./sprites.js";
 
-const FOV = Math.PI/3;
-const MAX_DEPTH = 20;
-const BASE_SCREEN_WIDTH = 1920;
-const imageCache = new Map();
-const imageDimensions = new Map();
-const ctxCache = new WeakMap();
-const bgState = {
-  current: [221, 217, 215],
-  target: [221, 217, 215],
-  from: [221, 217, 215],
-  start: 0,
-  duration: 450
-};
+const FOV = Math.PI/3, MAX_DEPTH = 20, BASE_SCREEN_WIDTH = 1920;
+const HALF_FOV = FOV / 2, INV_FOV = 1 / FOV, PROJECTION_SCALE = (1 / Math.tan(HALF_FOV)) / 2;
+const DEFAULT_THEME = { bg: '#FFF5EB', primary: '#3C2828' };
+const imageCache = new Map(), imageDimensions = new Map(), ctxCache = new WeakMap();
+const animatedCanvases = new Map(); // path -> {img, canvas, ctx}
+const sprites = getAllSprites(), spriteDistances = [], _entryPool = [];
+const fallbackBgRgb = [221, 217, 215];
+let lastBgHex = null, lastBgRgb = fallbackBgRgb;
+const bgState = { current: new Float32Array([255,245,235]), target: new Float32Array([255,245,235]), from: new Float32Array([255,245,235]), start: 0, duration: 450 };
 
 function hexToRgb(hex) {
-  const normalized = hex?.replace('#', '');
-  if (!normalized || (normalized.length !== 6 && normalized.length !== 3)) return null;
-  const value = normalized.length === 3
-    ? normalized.split('').map(c => c + c).join('')
-    : normalized;
-  const intVal = parseInt(value, 16);
-  if (Number.isNaN(intVal)) return null;
-  return [(intVal >> 16) & 255, (intVal >> 8) & 255, intVal & 255];
+  let n = hex?.replace('#', '');
+  if (!n || (n.length !== 6 && n.length !== 3)) return null;
+  if (n.length === 3) n = n.split('').map(c => c + c).join('');
+  const v = parseInt(n, 16);
+  return Number.isNaN(v) ? null : [(v >> 16) & 255, (v >> 8) & 255, v & 255];
 }
 
+let _bgCachedStr = null, _bgCachedR = -1, _bgCachedG = -1, _bgCachedB = -1;
 function updateBgColor(targetHex, now) {
-  const target = hexToRgb(targetHex) || [221, 217, 215];
-  if (bgState.target[0] !== target[0] || bgState.target[1] !== target[1] || bgState.target[2] !== target[2]) {
-    bgState.target = target;
-    bgState.from = bgState.current.slice();
+  if (targetHex !== lastBgHex) { lastBgHex = targetHex; lastBgRgb = hexToRgb(targetHex) || fallbackBgRgb; }
+  const tgt = lastBgRgb;
+  if (tgt[0] !== bgState.target[0] || tgt[1] !== bgState.target[1] || tgt[2] !== bgState.target[2]) {
+    bgState.target[0] = tgt[0]; bgState.target[1] = tgt[1]; bgState.target[2] = tgt[2];
+    bgState.from[0] = bgState.current[0]; bgState.from[1] = bgState.current[1]; bgState.from[2] = bgState.current[2];
     bgState.start = now;
   }
-  const t = Math.min(1, (now - bgState.start) / bgState.duration);
-  const eased = t * t * (3 - 2 * t);
-  bgState.current = [
-    Math.round(bgState.from[0] + (bgState.target[0] - bgState.from[0]) * eased),
-    Math.round(bgState.from[1] + (bgState.target[1] - bgState.from[1]) * eased),
-    Math.round(bgState.from[2] + (bgState.target[2] - bgState.from[2]) * eased)
-  ];
-  return `rgb(${bgState.current[0]}, ${bgState.current[1]}, ${bgState.current[2]})`;
+  const t = Math.min(1, (now - bgState.start) / bgState.duration), e = t * t * (3 - 2 * t);
+  const r = Math.round(bgState.from[0] + (bgState.target[0] - bgState.from[0]) * e);
+  const g = Math.round(bgState.from[1] + (bgState.target[1] - bgState.from[1]) * e);
+  const b = Math.round(bgState.from[2] + (bgState.target[2] - bgState.from[2]) * e);
+  bgState.current[0] = r; bgState.current[1] = g; bgState.current[2] = b;
+  if (r === _bgCachedR && g === _bgCachedG && b === _bgCachedB) return _bgCachedStr;
+  _bgCachedR = r; _bgCachedG = g; _bgCachedB = b;
+  return _bgCachedStr = `rgb(${r},${g},${b})`;
 }
 
 function loadImage(path) {
-  if (imageCache.has(path)) {
-    return imageCache.get(path);
-  }
-  
+  if (imageCache.has(path)) return imageCache.get(path);
   const img = new Image();
   img.src = path;
   img.onload = () => {
@@ -55,158 +47,170 @@ function loadImage(path) {
       height: img.naturalHeight,
       aspectRatio: img.naturalWidth / img.naturalHeight
     });
+    // For animated WebP/GIF: set up an offscreen canvas sized to the image.
+    // Every renderFrame we'll copy the live img into it, then draw that canvas
+    // as the sprite texture — this reliably captures each animation frame.
+    if (path.endsWith('.webp') || path.endsWith('.gif')) {
+      img.style.cssText = 'position:fixed;top:0;left:0;opacity:0.001;pointer-events:none;z-index:-1';
+      document.body.appendChild(img);
+      const c = document.createElement('canvas');
+      c.width = img.naturalWidth;
+      c.height = img.naturalHeight;
+      const cx = c.getContext('2d');
+      animatedCanvases.set(path, { img, canvas: c, ctx: cx });
+    }
   };
   imageCache.set(path, img);
   return img;
 }
 
+function refreshAnimatedCanvases() {
+  for (const { img, canvas, ctx } of animatedCanvases.values()) {
+    if (!img.complete || img.naturalWidth === 0) continue;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(img, 0, 0);
+  }
+}
+
+function getAnimatedSource(path) {
+  const entry = animatedCanvases.get(path);
+  return entry ? entry.canvas : null;
+}
+
 function getCanvasContext(canvas) {
   let ctx = ctxCache.get(canvas);
   if (!ctx) {
-    ctx = canvas.getContext("2d");
+    ctx = canvas.getContext('2d');
+    ctx.imageSmoothingEnabled = false;
     ctxCache.set(canvas, ctx);
   }
   return ctx;
 }
 
-function ensureSpriteFramesLoaded(sprite) {
-  if (!Array.isArray(sprite.frames) || sprite.frames.length === 0) return;
-  if (sprite._framesPreloaded) return;
-  sprite._framesPreloaded = true;
-  for (const frame of sprite.frames) {
-    if (typeof frame === 'string' && frame.includes('.')) {
-      loadImage(frame);
+for (const sprite of sprites) {
+  if (Array.isArray(sprite.frames) && !sprite._framesPreloaded) {
+    sprite._framesPreloaded = true;
+    for (const f of sprite.frames) if (typeof f === 'string' && f.includes('.')) loadImage(f);
+  }
+  if (sprite.texture?.includes('.')) loadImage(sprite.texture);
+  if (Array.isArray(sprite.childSprites)) {
+    for (const t of sprite.childSprites) {
+      if (Array.isArray(t.frames)) for (const f of t.frames) if (typeof f === 'string' && f.includes('.')) loadImage(f);
+      if (t.texture?.includes('.')) loadImage(t.texture);
     }
   }
 }
 
-function getSpriteAspectRatio(sprite, preferredPath, fallbackPath) {
-  const preferredDims = preferredPath ? imageDimensions.get(preferredPath) : null;
-  if (preferredDims) return preferredDims.aspectRatio;
-  const fallbackDims = fallbackPath ? imageDimensions.get(fallbackPath) : null;
-  if (fallbackDims) return fallbackDims.aspectRatio;
-  if (Array.isArray(sprite.frames)) {
-    for (const frame of sprite.frames) {
-      const frameDims = imageDimensions.get(frame);
-      if (frameDims) return frameDims.aspectRatio;
-    }
-  }
-  return 1.0;
+function getSpriteAspectRatio(sprite, pref, fall) {
+  const ar = p => p && imageDimensions.get(p)?.aspectRatio;
+  return ar(pref) || ar(fall) || sprite.frames?.reduce((r, f) => r || ar(f), 0) || 1;
 }
 
-export function renderFrame(canvas, playerX, playerY, playerAngle, proximityRadius = 1, infoProximityActive = false, targetBgColor = "#DDD9D7") {
-  const ctx = getCanvasContext(canvas);
-  const width = canvas.width;
-  const height = canvas.height;
-
-  ctx.imageSmoothingEnabled = false;
+export function renderFrame(canvas, playerX, playerY, playerAngle) {
+  const ctx = getCanvasContext(canvas), width = canvas.width, height = canvas.height, now = performance.now();
+  refreshAnimatedCanvases();
   ctx.globalAlpha = 1;
-
-  const now = performance.now();
-  ctx.fillStyle = updateBgColor(targetBgColor, now);
+  ctx.fillStyle = updateBgColor(DEFAULT_THEME.bg, now);
   ctx.fillRect(0, 0, width, height);
-
-  renderSprites(ctx, width, height, playerX, playerY, playerAngle, now, infoProximityActive);
+  renderSprites(ctx, width, height, playerX, playerY, playerAngle, now);
 }
 
-function getTimeFadeValue(sprite, now, isActive) {
-  const fadeConfig = sprite.proximityFade;
-  if (!fadeConfig || fadeConfig.mode !== 'onProximity') return null;
-  const target = isActive ? 1 : 0;
-  if (fadeConfig._target !== target) {
-    fadeConfig._target = target;
-    fadeConfig._from = fadeConfig._value ?? target;
-    fadeConfig._start = now;
+function getSpriteOpacity(sprite, playerX, playerY, now) {
+  const fc = sprite.proximityOpacity;
+  if (!fc) return 1;
+
+  let target = 0;
+  if (!sprite._removeAfterFade) {
+    const dx = sprite.x - playerX;
+    const dy = sprite.y - playerY;
+    const radius = fc.radius ?? 2.2;
+    const distSq = dx * dx + dy * dy;
+    if (distSq < radius * radius) {
+      const fadeRange = Math.min(fc.fadeRange ?? 0.8, radius);
+      const solidRadius = Math.max(0, radius - fadeRange);
+      const dist = Math.sqrt(distSq);
+      target = dist <= solidRadius ? 1 : (radius - dist) / (fadeRange || 1);
+    }
   }
-  const duration = fadeConfig.duration ?? 400;
-  const elapsed = Math.min(1, (now - (fadeConfig._start ?? now)) / duration);
-  const value = (fadeConfig._from ?? target) + (target - (fadeConfig._from ?? target)) * elapsed;
-  fadeConfig._value = value;
-  return value;
+
+  if (fc._target !== target) {
+    fc._target = target;
+    fc._from = fc._value ?? target;
+    fc._start = now;
+  }
+
+  const elapsed = Math.min(1, (now - (fc._start ?? now)) / (fc.duration ?? 220));
+  fc._value = (fc._from ?? target) + (target - (fc._from ?? target)) * elapsed;
+  return fc._value;
 }
 
-function renderSprites(ctx, width, height, playerX, playerY, playerAngle, now, infoProximityActive) {
-  const sprites = getAllSprites();
-  const frameTick = Math.floor(now / 125); // 8 fps
-  const spriteDistances = sprites
-    .map(sprite => {
-      const dx = sprite.x - playerX;
-      const dy = sprite.y - playerY;
-      const distance = Math.hypot(dx, dy);
-      if (distance > MAX_DEPTH) return null;
-      const angle = Math.atan2(dy, dx);
-      return { sprite, distance, angle };
-    })
-    .filter(s => s !== null)
-    .sort((a, b) => b.distance - a.distance);
-  for (const { sprite, distance, angle } of spriteDistances) {
-    ensureSpriteFramesLoaded(sprite);
-    const texturePath = Array.isArray(sprite.frames) && sprite.frames.length > 0
-      ? sprite.frames[frameTick % sprite.frames.length]
-      : sprite.texture;
+function renderSprites(ctx, width, height, playerX, playerY, playerAngle, now) {
+  const frameTick = Math.floor(now / 125), maxDepthSq = MAX_DEPTH * MAX_DEPTH;
+  const cosA = Math.cos(playerAngle), sinA = Math.sin(playerAngle);
+  let poolIdx = 0;
+  spriteDistances.length = 0;
+  for (let i = 0; i < sprites.length; i++) {
+    const sprite = sprites[i], dx = sprite.x - playerX, dy = sprite.y - playerY;
+    if (sprite._removeAfterFade && (sprite.proximityOpacity?._value ?? 0) <= 0.02) {
+      sprites.splice(i--, 1);
+      continue;
+    }
+    if (dx * cosA + dy * sinA <= 0) continue; // behind player
+    const distSq = dx * dx + dy * dy;
+    if (distSq > maxDepthSq) continue;
+    let e = _entryPool[poolIdx];
+    if (!e) _entryPool[poolIdx] = e = {};
+    e.sprite = sprite; e.distance = Math.sqrt(distSq); e.angle = Math.atan2(dy, dx);
+    spriteDistances[poolIdx++] = e;
+  }
+  spriteDistances.length = poolIdx;
+  // Insertion sort — allocation-free and faster than Array.sort for small lists
+  for (let i = 1; i < poolIdx; i++) {
+    const key = spriteDistances[i];
+    let j = i - 1;
+    while (j >= 0 && spriteDistances[j].distance < key.distance) {
+      spriteDistances[j + 1] = spriteDistances[j];
+      j--;
+    }
+    spriteDistances[j + 1] = key;
+  }
+  for (let si = 0; si < poolIdx; si++) {
+    const entry = spriteDistances[si];
+    const sprite = entry.sprite, distance = entry.distance, angle = entry.angle;
+    const spriteOpacity = getSpriteOpacity(sprite, playerX, playerY, now);
+    if (spriteOpacity <= 0.02) continue;
+    const texturePath = Array.isArray(sprite.frames) && sprite.frames.length > 0 ? sprite.frames[frameTick % sprite.frames.length] : sprite.texture;
     const baseTexture = sprite.texture || (Array.isArray(sprite.frames) ? sprite.frames[0] : null);
-    // Calculate angle relative to player view
     let relativeAngle = angle - playerAngle;
-    while (relativeAngle > Math.PI) relativeAngle -= 2 * Math.PI;
-    while (relativeAngle < -Math.PI) relativeAngle += 2 * Math.PI;
-    
-    // Only draw if sprite is in field of view
-    if (Math.abs(relativeAngle) > FOV / 2) continue;
-    
-    // Calculate screen position
-    const screenX = (relativeAngle + FOV / 2) / FOV * width;
-    
+    if (relativeAngle > Math.PI) relativeAngle -= 2 * Math.PI;
+    else if (relativeAngle < -Math.PI) relativeAngle += 2 * Math.PI;
+    if (relativeAngle > HALF_FOV || relativeAngle < -HALF_FOV) continue;
+
+    const screenX = (relativeAngle + HALF_FOV) * INV_FOV * width;
     const correctedDistance = distance * Math.cos(relativeAngle);
     const size = sprite.screenSize ? sprite.size * (width / BASE_SCREEN_WIDTH) : sprite.size;
-    const spriteHeight = (size / correctedDistance) * (1 / Math.tan(FOV / 2) / 2) * height;
-    
-    // Get image dimensions to maintain aspect ratio
-    const aspectRatio = getSpriteAspectRatio(sprite, texturePath, baseTexture);
-    const spriteWidth = spriteHeight * aspectRatio;
-    
-    const spriteY = (height - spriteHeight) / 2;
-    const spriteLeft = screenX - spriteWidth / 2;
-    
-    // Draw sprite - check if texture is an image path or fallback color
-    if (texturePath && texturePath.includes('.')) {
-      const animImg = loadImage(texturePath);
-      const baseImg = baseTexture && baseTexture.includes('.') ? loadImage(baseTexture) : null;
+    const spriteHeight = (size / correctedDistance) * PROJECTION_SCALE * height;
+    const spriteWidth = spriteHeight * getSpriteAspectRatio(sprite, texturePath, baseTexture);
+    const zOffset = sprite.heightScale ?? 0;
+    const projectedYOffset = (zOffset / correctedDistance) * PROJECTION_SCALE * height;
+    const spriteY = (height - spriteHeight) / 2 - projectedYOffset, spriteLeft = screenX - spriteWidth / 2;
+    if (spriteWidth < 1) continue;
 
-      const imgToDraw = (animImg?.complete && animImg.naturalHeight !== 0)
-        ? animImg
-        : (baseImg?.complete && baseImg.naturalHeight !== 0 ? baseImg : null);
-
+    if (texturePath?.includes('.')) {
+      const animSrc = getAnimatedSource(texturePath);
+      const animImg = animSrc || loadImage(texturePath);
+      const baseImg = !animSrc && baseTexture?.includes('.') ? loadImage(baseTexture) : null;
+      const imgToDraw = animSrc
+        ? (animSrc.width > 0 ? animSrc : null)
+        : (animImg?.complete && animImg.naturalHeight !== 0 ? animImg : (baseImg?.complete && baseImg.naturalHeight !== 0 ? baseImg : null));
       if (!imgToDraw) continue;
-
-      const timeFade = getTimeFadeValue(sprite, now, infoProximityActive);
-      const fadeTargetPath = timeFade !== null ? sprite.proximityFade?.to : null;
-      const fadeTargetImg = fadeTargetPath ? loadImage(fadeTargetPath) : null;
-      const canTimeFade = timeFade !== null && fadeTargetImg && fadeTargetImg.complete && fadeTargetImg.naturalHeight !== 0;
-
-      if (canTimeFade) {
-        if (timeFade <= 0.02) {
-          ctx.globalAlpha = 0.9;
-          ctx.drawImage(imgToDraw, spriteLeft, spriteY, spriteWidth, spriteHeight);
-        } else if (timeFade >= 0.98) {
-          ctx.globalAlpha = 0.9;
-          ctx.drawImage(fadeTargetImg, spriteLeft, spriteY, spriteWidth, spriteHeight);
-        } else {
-          ctx.globalAlpha = 0.9 * (1 - timeFade);
-          ctx.drawImage(imgToDraw, spriteLeft, spriteY, spriteWidth, spriteHeight);
-          ctx.globalAlpha = 0.9 * timeFade;
-          ctx.drawImage(fadeTargetImg, spriteLeft, spriteY, spriteWidth, spriteHeight);
-        }
-      } else {
-        ctx.globalAlpha = 0.9;
-        ctx.drawImage(imgToDraw, spriteLeft, spriteY, spriteWidth, spriteHeight);
-      }
+      ctx.globalAlpha = spriteOpacity;
+      ctx.drawImage(imgToDraw, spriteLeft, spriteY, spriteWidth, spriteHeight);
     } else {
-      // Fallback: draw as colored rectangle
-      ctx.globalAlpha = 0.85;
+      ctx.globalAlpha = spriteOpacity;
       ctx.fillStyle = sprite.texture;
       ctx.fillRect(spriteLeft, spriteY, spriteWidth, spriteHeight);
     }
     ctx.globalAlpha = 1;
-    
   }
 }

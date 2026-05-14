@@ -1,24 +1,27 @@
-export const touch = { forward: false, backward: false, rotateLeft: false, rotateRight: false, isMobile: false, disabled: false, extraVisible: false };
-const checkMobileOrientation = () => touch.isMobile = window.innerWidth / window.innerHeight < 1;
-const updateTouchZones = (touches) => {
-  if (touch.disabled) {
-    touch.forward = touch.backward = touch.rotateLeft = touch.rotateRight = false;
-    return;
-  }
-  touch.forward = touch.backward = touch.rotateLeft = touch.rotateRight = false;
-  for (let t of touches) {
-    const x = t.clientX, y = t.clientY, w = window.innerWidth, h = window.innerHeight;
-    const isBottomRight = x > w / 2 && y > h - h / 4;
-    if (y < h / 4) touch.forward = true;
-    if (y > h - h / 4 && !(isBottomRight && touch.extraVisible)) touch.backward = true;
-    if (x < w / 2 && y >= h / 4 && y <= h - h / 4) touch.rotateLeft = true;
-    if (x > w / 2 && y >= h / 4 && y <= h - h / 4) touch.rotateRight = true;
+export const touch = { forward: false, backward: false, rotateLeft: false, rotateRight: false, isMobile: false };
+let halfWidth = 0, topZoneLimit = 0, bottomZoneStart = 0;
+const resetTouchMotion = () => touch.forward = touch.backward = touch.rotateLeft = touch.rotateRight = false;
+const updateTouchMetrics = () => {
+  const w = window.innerWidth, h = window.innerHeight;
+  halfWidth = w / 2;
+  topZoneLimit = h / 4;
+  bottomZoneStart = h - topZoneLimit;
+  touch.isMobile = w / h < 1;
+};
+const updateTouchZones = touches => {
+  resetTouchMotion();
+  for (const t of touches) {
+    const x = t.clientX, y = t.clientY;
+    if (y < topZoneLimit) touch.forward = true;
+    if (y > bottomZoneStart) touch.backward = true;
+    if (y >= topZoneLimit && y <= bottomZoneStart) {
+      if (x < halfWidth) touch.rotateLeft = true;
+      if (x > halfWidth) touch.rotateRight = true;
+    }
   }
 };
-document.addEventListener('touchstart', e => updateTouchZones(e.touches));
-document.addEventListener('touchend', () => {
-  if (touch.disabled) return;
-  touch.forward = touch.backward = touch.rotateLeft = touch.rotateRight = false;
-});
-document.addEventListener('touchmove', e => updateTouchZones(e.touches));
-['load', 'resize'].forEach(e => window.addEventListener(e, checkMobileOrientation));
+document.addEventListener('touchstart', e => updateTouchZones(e.touches), { passive: true });
+document.addEventListener('touchmove', e => updateTouchZones(e.touches), { passive: true });
+document.addEventListener('touchend', () => resetTouchMotion(), { passive: true });
+['load', 'resize', 'orientationchange'].forEach(e => window.addEventListener(e, updateTouchMetrics));
+updateTouchMetrics();

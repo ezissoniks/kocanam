@@ -1,224 +1,174 @@
-export const SPRITES = [
-  { id: 'A', x: 1, y: 3, texture: 'textures/putraimi.png', size: 0.5, name: 'Putraimi: Neo-šlāgeru kopums vol.2', type: 'Mūzika', year: '2026', description: 'Albums, kuru veidoja Kočāns Miķelis apvienībā ar Biezenītu.', 
-    infoImages: [
-      { src: 'textures/chibas.png', alt: 'Cover 2'},
-      { src: 'textures/ceturta.png', alt: 'Cover 3'},
-    ],
-    long_description: 
-    `'Putraimi: Neo-šlāgeru kopums vol. 2' ir albums, ko veidojis Kočāns Miķelis apvienībā ar Biezenītu. Žanriski nekonkrētais albums izpēta džeza, roka un metāla noslieces. Tas ir turpinājums 2023. gada izdotajam albumam 'Kannas: Neo-šlāgeru kopums'.
-
-Tas ir turpinājums 2023. gadā izdotajam albumam “Kannas: Neo-šlāgeru kopums”. Par “Putraimiem” Kočāns Miķeļis saka: “Kā putraims putraimu dzenā manā putrā jeb albumā pētījām neo-šlāgera žanriskās robežas, trenējāmies sasaistīt attālākās emocijas vienā dziesmu pūrā.
-
-Pirms albuma izdošanas, tika izdoti divi singli - "Čības"  un "Ceturtā atmoda".
-Albums ir pieejams Spotify, Apple Music un citās mūzikas platformās.
-
-1. Čības
-
-Mūzika: Kočāns Miķelis, Biezenīts
-Teksts: Miķelis Kočāns
-Elektriskā ģitāra: Emīls Gerhards Bērziņš
-Taustiņi: Miķelis Kočāns 
-Bungas: Miķelis Kočāns 
-Vokāls: Miķelis Kočāns, Eva Annija Vilka
-Miks un māsters: Miķelis Kočāns 
-
-Tu redzi, kā man kājās čības
-Tev prātā rosās neķītrības
-Un kad mēs tiecamies pēc mīlas
-Man neizprotami vai mīli tu mani,
-Vai manas skaistās
-Čības?
-Čības
-Manas skaistās čības,
-Čības
-
-Līdzko man nav kājās čības,
-Uzreiz sāc prasīt vai tās jūtas ir īstas
-Bet kamēr prātoju kā salabt rīt
-Tu ņem un sapņo kā mani pirksti spīd
-
-Cauri čībām, to daudzām īpašībām,
-to komfortabli mīkstā polivinila hlorīda drānām
-Hej! Vai tas slazds manā priekšā?
-Ak, mīļā
-
-Tu redzi, kā man kājās čības
-Tev prātā rosās neķītrības
-Un kad mēs tiecamies pēc mīlas
-Man neizprotami vai mīli tu mani,
-Vai manas skaistās
-Čības?
-Čības
-Manas skaistās  čības,
-Čības
-
-Atkal man nav kājās čības
-Mūsu attiecībām sarežģītības
-Es nespēju vairs rēgot naivo ģīmi
-Jo nerimst tava mīla vienai ar mani
-
-Bez tām čībām, to daudzām īpašībām,
-to zīmolu, to krāsu, formu, smaržu bagātību kārtām
-Hej! Vai tu mīli, kas iekšā?
-Ak, mīļā...
-
-(Tu redzi, kā man kājās čības)
-Bez tām vairs dzīvot nespēji
-(Tev prātā rosās neķītrības)
-Par nelieti tu dēvēji
-
-(Tu redzi, kā man kājās čības)
-Vai tiešām vainīgs būšu?
-(Tev prātā rosās neķītrības)
-Bet klāt lūzuma punkts!
-
-Viņa teica:
-"Čības paliek
-Virsū!"
-
-(Tu redzi, kā man kājās čības)
-(Tev prātā rosās neķītrības)
-
-(Tu redzi, kā man kājās čības)
-(Tev prātā rosās neķītrības)
-
-(Tu redzi, kā man kājās čības)
-(Tev prātā rosās neķītrības)
-
-(Tu redzi, kā man kājās čības)
-(Tev prātā rosās neķītrības)
-
-Tu redzi, kā man kājās čības
-(Tu redzi, kā man kājās čības)
-Tev prātā rosās neķītrības
-(Tev prātā rosās neķītrības)
-
-(Tu redzi, kā man kājās čības)
-(Tev prātā rosās neķītrības)
-
-Kaut es to saprastu agrāk,
-Ka dziesma nav par čībām,
-Bet par sirdsapziņām...
-
-2. Ulvim treniņš
-
-Mūzika: Kočāns Miķelis, Biezenīts
-Teksts: Miķelis Kočāns
-Basģitāra: Maija Mairita Imša
-Elektriskā ģitāra: Emīls Gerhards Bērziņš
-Taustiņi: Miķelis Kočāns 
-Bungas: Miķelis Kočāns 
-Vokāls: Miķelis Kočāns
-Miks un māsters: Miķelis Kočāns
-
-Ulvim treniņš, Ulvim treniņš
-Ulvim treniņš, Ulvim treniņš
-Ulvim treniņš, Ulvim treniņš
-Ulvim treniņš, Ulvim treniņš
-
-Ulvim treniņš,
-Ulvim treniņš!
-Ulvim treniņš,
-Ulvim treniņš!
-
-Ulvim treniņš, Ulvim treniņš
-Ulvim treniņš, Ulvim treniņš
-Ulvim treniņš, Ulvim treniņš
-Ulvim treniņš, Ulvim treniņš
-
-Ulvim treniņš,
-Ulvim treniņš!
-Ulvim treniņš,
-Ulvim treniņš
-
-Ulvim treniņš,
-Ulvim treniņš!
-
-Ulvim treniņš, Ulvim treniņš
-Ulvim treniņš, Ulvim treniņš
-Ulvim treniņš, Ulvim treniņš
-Ulvim treniņš, Ulvim treniņš
-
-3. Putraimi
-
-Mūzika: Biezenīts, Kočāns Miķelis
-Teksts: Miķelis Kočāns, Emīls Gerhards Bērziņš
-Basģitāra: Emīls Gerhards Bērziņš 
-Elektriskā ģitāra: Emīls Gerhards Bērziņš
-Taustiņi: Miķelis Kočāns 
-Bungas: Miķelis Kočāns 
-Vokāls: Miķelis Kočāns, Emīls Gerhards Bērziņš 
-Miks un māsters: Miķelis Kočāns
-
-Ir pusnakts
-Mūsu varonis ierodas vietējā krogā
-Tiešā runā... Viņš saka:
-
-Es iedomājos sakām 
-'Maksā naudā vai baudā'
-Es saku, pirmkārt, 
-Esmu necils muzikants, 
-Man netiek piešķirts grants, 
-Lai finansētu manas izšķērdīgās izdarības 
-Un tamlīdzīgas vajadzības 
-Un, otrkārt, 
-Vai šī saruna tev nesagādā pietiekamu baudu? 
-Jo, cik man acis rāda, te neviena cita nav
-Kā putraims putraimu dzenā manā putrā
-
-Dzīve švaka, 
-Pēc karantīnas krogos uzliek mp3 un mūziķiem tie saka:
-Lasies lapās!
-Maģistrs man akadēmijā tik ļāva iestigt dziļā, dziļā, dziļā depresijā!
-Nespēlēju vairs es klubos, vairāk apdzeru tos
-
-Tikai kartupeļu mizas mani bērni ēd
-Pēdējās kapeikas no mana maka bēg 
-Kā putraims putraimu dzenā manā putrā
-
-
-` },
-
-  { id: 'B', x: 3.8, y: 0.8, texture: 'textures/wall-art-1.png', size: 0.3, screenSize: true,
-    frames: [
-      'textures/wall-art-1.png',
-      'textures/wall-art-2.png',
-      'textures/wall-art-3.png',
-      'textures/wall-art-4.png'
-    ]
+const BASE_SPRITES = [
+  {
+    id: 'A',
+    x: 3.5,
+    y: 0.8,
+    texture: '',
+    size: 0.3,
+    heightScale: 1.0,
+    screenSize: true
   },
 
-  { id: 'C', x: 5, y: 3, texture: 'textures/spuldze25_0.png', size: 0.3, name: 'Spuldze `25', type: 'Dizains', year: '2025', description: 'Skolēnu pašpārvalžu saliedēšanās pasākuma vizuālā identitāte.', 
-    proximityFade: { to: 'textures/spuldze25_1.png', mode: 'onProximity', duration: 450 },
-    proximityTheme: { bg: '#EBE9AE', primary: '#16344C' },
-    infoMainImage: { src: 'textures/spuldze25_logo.png', alt: 'Cover 2' },
-    infoImages: [
-      { src: 'textures/spuldze25_insta_1.png', alt: 'Cover 2' },
-      { src: 'textures/spuldze25_insta_2.png', alt: 'Cover 3' },
-      { src: 'textures/spuldze_25_balle_insta.png', alt: 'Cover 4' },
-      { src: 'textures/spuldze25_apsveikums.png', alt: 'Cover 5' },
-      { src: 'textures/Page 6.png', alt: 'Cover 6' },
-      { src: 'textures/spuldze25_2.png', alt: 'Cover 7' }
+  {
+    id: 'B',
+    x: 2.5,
+    y: 0.8,
+    texture: 'textures/putraimi.png',
+    size: 0.5,
+    childProximityRadius: 2.2,
+    childFadeRange: 0.8,
+    childFadeDuration: 220,
+    name: 'Putraimi: Neo-šlāgeru kopums vol.2',
+    description: 'Albuma vizuālā identitāte. 2026.',
+    childSprites: [
+      { xOffset: -0.10, yOffset: -0.05, texture: 'textures/chibas.png', size: 0.18, heightScale: 0.1 },
+      { xOffset: 0.10, yOffset: -0.05, texture: 'textures/ceturta.png', size: 0.18, heightScale: -0.1 },
+      { xOffset: -0.10, yOffset: 0.01, texture: 'textures/disc (1).jpg', size: 0.28, heightScale: -0.1 },
+      { xOffset: 0.10, yOffset: -0.02, texture: 'textures/disc (2).jpg', size: 0.38, heightScale: 0.1 },
+      { xOffset: 0.10, yOffset: -0.02, texture: 'textures/putraimi_disc.png', size: 0.28, heightScale: 0 },
+      { xOffset: -0.10, yOffset: -0.02, texture: 'textures/disc (3).jpg', size: 0.28, heightScale: 0 },
+      { xOffset: 0, yOffset: 0.06, texture: 'textures/disc (4).jpg', size: 0.35, heightScale: 0 },
     ],
+    long_description: ''
+  },
 
-    long_description: 
-    `Skolēnu domju sadraudzības pasākuma “Spuldze”, ko rīko Cēsu Valsts ģimnāzija (CVĢ), mērķis ir satikt un iepazīties ar citu līdzīgu mācību iestāžu pašpārvalžu pārstāvjiem, neformālā gaisotnē veidojot kontaktus sadarbībai.
+    {
+    id: 'C',
+    x: 4.5,
+    y: 0.8,
+    texture: 'textures/lma_mode_1.png',
+    size: 0.5,
+    childProximityRadius: 2.2,
+    childFadeRange: 0.8,
+    childFadeDuration: 220,
 
-“Spuldzē” piedalījās viesi no desmit skolām: Valmieras Valsts ģimnāzijas, Valmieras Pārgaujas Valsts ģimnāzijas, Rīgas Valsts 1.ğimnāzijas, Dau­gavpils Valsts ģimnāzijas, Jel­gavas Spīdolas Valsts ģimnāzijas, Aizkraukles novada vidusskolas, Jēkabpils Valsts ģimnāzijas, Madonas Valsts ģimnāzijas, Rīgas Franču liceja un Draudzīgā Aicinājuma Cēsu Valsts ģimnāzijas.
+    name: 'Latvijas Mākslas akadēmijas Modes skate 2026',
+    description: 'Latvijas mākslas akadēmijas pasākuma vizuālās identitātes pieteikums. 2026.',
+    childSprites: [
+      { xOffset: -0.10, yOffset: -0.05, texture: 'textures/lma_mode_poster.png', size: 0.18, heightScale: 0.1 },
+      { xOffset: 0.10, yOffset: -0.05, texture: 'textures/lma_mode (2).png', size: 0.18, heightScale: -0.1 },
+      { xOffset: 0, yOffset: 0.06, size: 0.35, heightScale: 0, frames: [
+        'textures/Asset 1@4x.png',
+        'textures/Asset 3@4x.png',
+        'textures/Asset 4@4x.png',
+        'textures/Asset 5@4x.png',
+        'textures/Asset 6@4x.png',
+        'textures/Asset 7@4x.png',
+        'textures/Asset 8@4x.png',
+        'textures/Asset 9@4x.png',
+        'textures/Asset 10@4x.png',
+        'textures/Asset 11@4x.png',
+        'textures/Asset 12@4x.png',
+        'textures/Asset 13@4x.png',
+        'textures/Asset 14@4x.png',
+      ] },
+    ],
+    long_description: ''
+  },
 
-CVĢ Skolēnu domes pārstāvis Mārcis Andersons saka: “”Spul­dze” pulcē vairāku mācību iestāžu skolēnu domju pārstāvjus, tomēr pasākums nav pieredzes apmaiņas seminārs. Uzsvars ir uz jaunu cilvēku iepazīšanu un kontaktu veidošanos starp skolām. Pasākuma gaitā klātesošie no svešiem kļuva par savējiem. Tieši sarunas neformālajā gaisotnē un kopības sajūta ir aspekts, kas definē “Spuldzi”. To mēs vairākkārt secinājām, izvērtējot notikumu. “Spuldzē” “iededzamies” par vērtībām, kas vieno skolēnu domes. Mums, Cēsu Valsts ģimnāzijas Skolēnu domei, tas bija gada nozīmīgākais pasākums, novērtējām iespēju to organizēt un ar prieku uzņēmām ciemiņus no citām skolām.”
+  {
+    id: 'D',
+    x: 3.5,
+    y: 2,
+    texture: 'textures/luize_2.png',
+    size: 0.5,
+    childProximityRadius: 2.2,
+    childFadeRange: 0.8,
+    childFadeDuration: 220,
 
-“Spuldze” notika jau septīto gadu. Par tradīciju kļuvušo pasākumu atklāja Cēsu Valsts ģimnāzijas jauktais vokālais ansamblis Annas Bartušēvicas vadībā, sekoja ģimnāzijas direktores Inas Gaiķes un Skolēnu domes prezidentes vietnieka Mārča An­dersona uzruna dalībniekiem.
-
-“Pirms pasākumā paredzētajām norisēm dalībnieki izspēlēja iesildošās spēles. Par mūziku un skatuves izaicinājumiem ar skolēniem dalījās dziedātāja, dziesmu autore, producente KATŌ,” pastāsta CVĢ direktores vietniece audzināšanas darbā Vineta Stīpniece un piebilst, ka ievadā CVĢ pašpārvaldes pārstāve Annija Līce informēja par desmito sarunu šovu “LAMPA”, kas notiks jūlijā, un aicināja jauniešus pieteikties brīvprātīgajam darbam.
-
-Pasākumā skolēnu padomju pārstāvji dalījās ar nākotnes sapņiem, mērķiem un izaicinājumiem. Notika arī pašpārvalžu pieredzes apmaiņa un sarunas, kā uzlabot šo darbu, meklējot jaunas, inovatīvas idejas. “Spul­dzes” dalībniekiem interesants bija arī pasākuma viesa, Cēsu Valsts ģimnāzijas absolventa, TV un radio personības, mūziķa un grupas “Franco Franco” bundzinieka, audio reklāmu balss Mārtiņa Spura pieredzes stāsts “No sapņa līdz realitātei, ejot nezināmajā”.
-
-“Visu pasākumu organizē skolēni –paši plāno saturu, programmu, aktivitātes. Skolas vadība gan palīdz, ja nepieciešams. Bet pašpārvaldes pieredzē savā starpā dalās bez skolotāju līdzdalības. Arī dažādas norises, kurās skolēniem bija iespēja piedalīties, to­starp arī diskusijas, ir pašu skolēnu veidotas un vadītas,” pauž V.Stīp­niece.
-
-CVĢ direktores vietniece audzināšanas darbā pastāsta, ka “Spuldzes” iecere radusies, piedaloties līdzīgā pasākumā, ko rīkoja Madonā. “Izlēmām, ka vēlamies šādu notikumu savās mājās. Sākām plānot, domāt par nosaukumu. Tā kā Cēsīs ik gadu notiek sarunu festivāls “Lampa”, nolēmām, ka mums varētu būt “Spuldze”,” saka V.Stīpniece. ` },
+    name: 'Plakātu sērija. Luīze Kate Alsiņa.',
+    description: 'Kāda kursabiedra tipografikā balstītu plakātu sērijas izveide. 2026.',
+    childSprites: [
+      { xOffset: 0.10, yOffset: 0, texture: 'textures/luize_1.png', size: 0.3, heightScale: 0 },
+      { xOffset: -0.10, yOffset: 0, texture: 'textures/luize_3.png', size: 0.3, heightScale: 0 },
+    ],  
+  },
 
 ];
 
+export const SPRITES = BASE_SPRITES.slice();
+
 export const getSpriteById = id => SPRITES.find(s => s.id === id);
 export const getAllSprites = () => SPRITES;
+
+export function spawnChildSprites(parentId, playerX, playerY, maxVisible = 3) {
+  const parent = getSpriteById(parentId);
+  const templates = parent?.childSprites;
+  if (!parent || !Array.isArray(templates) || templates.length === 0) return 0;
+
+  let write = 0;
+  for (let i = 0; i < SPRITES.length; i++) {
+    const sprite = SPRITES[i];
+    if (sprite._childOf === parentId && sprite._removeAfterFade) continue;
+    SPRITES[write++] = sprite;
+  }
+  SPRITES.length = write;
+
+  // Monotonic counter — never resets, always advances in order
+  if (parent._nextChildIndex === undefined) parent._nextChildIndex = 0;
+  if (parent._nextChildIndex >= templates.length) return 0;
+
+  // Evict the oldest child if we're at the cap
+  write = 0;
+  let evicted = false;
+  for (let i = 0; i < SPRITES.length; i++) {
+    if (!evicted && SPRITES[i]._childOf === parentId) {
+      // count how many children exist
+      let count = 0;
+      for (let j = i; j < SPRITES.length; j++) if (SPRITES[j]._childOf === parentId) count++;
+      if (count >= maxVisible) { evicted = true; continue; } // skip (evict) this one
+    }
+    SPRITES[write++] = SPRITES[i];
+  }
+  SPRITES.length = write;
+
+  const templateIndex = parent._nextChildIndex++;
+  const t = templates[templateIndex];
+  const toPlayerX = typeof playerX === 'number' ? playerX - parent.x : 0;
+  const toPlayerY = typeof playerY === 'number' ? playerY - parent.y : 0;
+  const toPlayerLen = Math.hypot(toPlayerX, toPlayerY) || 1;
+  const forwardX = toPlayerX / toPlayerLen;
+  const forwardY = toPlayerY / toPlayerLen;
+  const sideX = -forwardY;
+  const sideY = forwardX;
+  const frontDistance = t.frontDistance ?? (0.35 + (t.yOffset ?? 0));
+  const sideOffset = t.sideOffset ?? (t.xOffset ?? 0);
+
+  SPRITES.push({
+    ...t,
+    id: `${parentId}__child_${templateIndex}`,
+    x: parent.x + forwardX * frontDistance + sideX * sideOffset,
+    y: parent.y + forwardY * frontDistance + sideY * sideOffset,
+    interactive: false,
+    _childOf: parentId,
+    proximityOpacity: {
+      radius: parent.childProximityRadius ?? 2.2,
+      fadeRange: parent.childFadeRange ?? 0.8,
+      duration: parent.childFadeDuration ?? 220,
+      _value: 0,
+      _from: 0,
+      _target: 1,
+      _start: performance.now()
+    }
+  });
+  return 1;
+}
+
+export function clearChildSprites(parentId) {
+  const parent = getSpriteById(parentId);
+  if (parent) {
+    parent._nextChildIndex = 0;
+  }
+
+  const now = performance.now();
+  for (let i = 0; i < SPRITES.length; i++) {
+    const sprite = SPRITES[i];
+    if (sprite._childOf !== parentId) continue;
+    sprite._removeAfterFade = true;
+    if (sprite.proximityOpacity) {
+      sprite.proximityOpacity._from = sprite.proximityOpacity._value ?? 1;
+      sprite.proximityOpacity._target = 0;
+      sprite.proximityOpacity._start = now;
+    }
+  }
+}
