@@ -11,8 +11,8 @@ const BASE_SPRITES = [
 
   {
     id: 'B',
-    x: 2.5,
-    y: 0.8,
+    x: 1,
+    y: 2,
     texture: 'textures/putraimi.png',
     size: 0.5,
     childProximityRadius: 2.2,
@@ -20,6 +20,7 @@ const BASE_SPRITES = [
     childFadeDuration: 220,
     name: 'Putraimi: Neo-šlāgeru kopums vol.2',
     description: 'Albuma vizuālā identitāte. 2026.',
+    description_en: 'Album visual identity. 2026.',
     childSprites: [
       { xOffset: -0.10, yOffset: -0.05, texture: 'textures/chibas.png', size: 0.18, heightScale: 0.1 },
       { xOffset: 0.10, yOffset: -0.05, texture: 'textures/ceturta.png', size: 0.18, heightScale: -0.1 },
@@ -29,45 +30,75 @@ const BASE_SPRITES = [
       { xOffset: -0.10, yOffset: -0.02, texture: 'textures/disc (3).jpg', size: 0.28, heightScale: 0 },
       { xOffset: 0, yOffset: 0.06, texture: 'textures/disc (4).jpg', size: 0.35, heightScale: 0 },
     ],
-    long_description: ''
+    long_description: 'Albuma autori: Kočāns Miķelis, Biezenīts. Eklektiskā albuma vizuālā identitāte vieno dziesmu pūru ar šīs mākslas pašu pamatu - disks, krekls, papīra lapa, vai kāda ikdienas iedvesma - tukšais laukums, kur idejas sāk tapt. Noformējums šādi svin manu radošo procesu, tāpēc visai albuma atribūtikai piemīt rokdarbu sajūta. Dizainu vieno viegli uztveramā vizuālā valoda ar atpazīstamo putraimu krāsu shēmu.',
+    long_description_en: "Album authors: Kočāns Miķelis, Biezenīts. The visual identity of this eclectic album centers around the foundation of art - a disc, shirt, sheet of paper, or even inspiration - the empty space where ideas are born. This is how the design celebrates my creative process. It is why the album's merchandise has a handcrafted feel. This design is united by concise visual language and an easily recognizable grain color scheme."
   },
 
-    {
+  {
     id: 'C',
-    x: 4.5,
-    y: 0.8,
-    texture: 'textures/lma_mode_1.png',
+    x: 1.5,
+    y: 2,
+    texture: 'textures/disc (5).jpg',
+    size: 0.5,
+    childProximityRadius: 2.2,
+    childFadeRange: 0.8,
+    childFadeDuration: 220,
+    name: 'Putraimu grāmata',
+    name_en: 'Putraimi book',
+    description: 'Blakus izdevums albumam. 2026.',
+    description_en: 'Publication for the album. 2026.',
+    long_description: "Daļa no Latvijas Mākslas akadēmijas Datorprogrammu studijām, pasniedzēja Līga Dubrovska. Izdevuma mērķis ir attēlot paveikto darbu fizikālā mērvienībā. Iekļauti komentāri par mūzikas industriju un to kā paveiktais darbs netiek īpaši labi atalgots. Darbs tiek uzskatīts kā ‘putraimi’ - nopērkams liela kvantitātē par mazu cenu.",
+    long_description_en: "Part of an assignment for computer studies in the Art Academy of Latvia, mentored by LĪga Dubrovska. The goal was to depict album creation as a physical unit of measurement. It has commentary on the music industry and how artists do not get compensated justly. The effort of album creation is depicted as grain, which you purchase for cheap in large quantities."
+  },
+
+  {
+    id: 'D',
+    x: 2,
+    y: 2,
+    texture: 'textures/luize_2.png',
     size: 0.5,
     childProximityRadius: 2.2,
     childFadeRange: 0.8,
     childFadeDuration: 220,
 
-    name: 'Latvijas Mākslas akadēmijas Modes skate 2026',
-    description: 'Latvijas mākslas akadēmijas pasākuma vizuālās identitātes pieteikums. 2026.',
+    name: 'Tipogrāfiskas afišas',
+    name_en: 'Typographic posters',
+    description: 'Luīze Kate Alsiņa - plakātu sērija. 2026.',
+    description_en: 'Luīze Kate Alsiņa - poster series. 2026.',
     childSprites: [
-      { xOffset: -0.10, yOffset: -0.05, texture: 'textures/lma_mode_poster.png', size: 0.18, heightScale: 0.1 },
-      { xOffset: 0.10, yOffset: -0.05, texture: 'textures/lma_mode (2).png', size: 0.18, heightScale: -0.1 },
-      { xOffset: 0, yOffset: 0.06, size: 0.35, heightScale: 0, frames: [
-        'textures/Asset 1@4x.png',
-        'textures/Asset 3@4x.png',
-        'textures/Asset 4@4x.png',
-        'textures/Asset 5@4x.png',
-        'textures/Asset 6@4x.png',
-        'textures/Asset 7@4x.png',
-        'textures/Asset 8@4x.png',
-        'textures/Asset 9@4x.png',
-        'textures/Asset 10@4x.png',
-        'textures/Asset 11@4x.png',
-        'textures/Asset 12@4x.png',
-        'textures/Asset 13@4x.png',
-        'textures/Asset 14@4x.png',
-      ] },
+      { xOffset: 0.10, yOffset: 0, texture: 'textures/luize_1.png', size: 0.3, heightScale: 0 },
+      { xOffset: -0.10, yOffset: 0, texture: 'textures/luize_3.png', size: 0.3, heightScale: 0 },
     ],
-    long_description: ''
+    long_description: "Daļa no Latvijas Mākslas akadēmijas tipografikas studijām, pasniedzējs Ivs Zenne. Izveides nosacījumi bija izveidot kāda kursabiedra tipografikā balstītu plakātu sēriju.",
+    long_description_en: "Part of an assignment for typography studies in the Art Academy of Latvia, mentored by Ivs Zenne. The task was to create typography-driven posters based on a fellow student."
   },
 
   {
-    id: 'D',
+    id: 'E',
+    x: 3,
+    y: 2,
+    texture: 'textures/spuldze25_insta_1.png',
+    size: 0.5,
+    childProximityRadius: 2.2,
+    childFadeRange: 0.8,
+    childFadeDuration: 220,
+
+    name: 'SPULDZE',
+    description: 'Vizuālā identitāte skolēnu pašvaldību forumam. 2023-2025.',
+    description_en: 'Visual identity for a school council forum. 2023-2025.',
+    childSprites: [
+      { xOffset: -0.10, yOffset: -0.05, texture: 'textures/spuldze25_insta_2.png', size: 0.18, heightScale: 0.1 },
+      { xOffset: 0.10, yOffset: -0.05, texture: 'textures/spuldze_25_balle_insta.png', size: 0.18, heightScale: -0.1 },
+      { xOffset: -0.10, yOffset: 0.01, texture: 'textures/spuldze25_apsveikums.png', size: 0.28, heightScale: -0.1 },
+      { xOffset: 0.10, yOffset: -0.02, texture: 'textures/spuldze25_logo.png', size: 0.38, heightScale: 0.1 },
+      { xOffset: -0.10, yOffset: -0.02, texture: 'textures/spuldze25_2.png', size: 0.28, heightScale: 0 },
+    ],
+    long_description: "SPULDZE ir ikgadējs Cēsu Valsts ğimnāzijas Skolēnu pašpārvalžu saliedēšanās pasākums, kura mērķis ir satikties ar citām pašpārvaldēm un pārrunāt aktualitātes un notikumus.",
+    long_description_en: "SPULDZE is an annual Cēsis State gymnasium student council event. The event cultivates Latvian student council experience exchange."
+  },
+
+  {
+    id: 'F',
     x: 3.5,
     y: 2,
     texture: 'textures/luize_2.png',
@@ -76,12 +107,59 @@ const BASE_SPRITES = [
     childFadeRange: 0.8,
     childFadeDuration: 220,
 
-    name: 'Plakātu sērija. Luīze Kate Alsiņa.',
-    description: 'Kāda kursabiedra tipografikā balstītu plakātu sērijas izveide. 2026.',
+    name: 'Cēsu Alus etiķešu dizainu maketi',
+    name_en: 'Cēsu Alus product design mock-ups',
+    description: 'Konceptuāli dizaina pieteikumi jaunai produkcijai. 2024.',
+    description_en: 'Design concepts for new products. 2024.',
     childSprites: [
       { xOffset: 0.10, yOffset: 0, texture: 'textures/luize_1.png', size: 0.3, heightScale: 0 },
       { xOffset: -0.10, yOffset: 0, texture: 'textures/luize_3.png', size: 0.3, heightScale: 0 },
-    ],  
+    ],
+    long_description: "Dizainu maketi veidoti saskaņā ar Cēsu Alus darbinieku inovāciju dienām.",
+    long_description_en: "Product concept-art created for the Cēsu Alus internal innovation competition."
+  },
+
+  {
+    id: 'G',
+    x: 4,
+    y: 2,
+    texture: 'textures/luize_2.png',
+    size: 0.5,
+    childProximityRadius: 2.2,
+    childFadeRange: 0.8,
+    childFadeDuration: 220,
+
+    name: 'Sphongiun Display burtveidols',
+    name_en: 'Sphongiun Display typeface',
+    description: 'Displeja burtveidols izveidots ar analogiem paņēmieniem. 2025.',
+    description_en: 'Display typeface created using analog techniques. 2025.',
+    childSprites: [
+      { xOffset: 0.10, yOffset: 0, texture: 'textures/luize_1.png', size: 0.3, heightScale: 0 },
+      { xOffset: -0.10, yOffset: 0, texture: 'textures/luize_3.png', size: 0.3, heightScale: 0 },
+    ],
+    long_description: "Daļa no Latvijas Mākslas akadēmijas tipografikas studijām, pasniedzējs Ivs Zenne. Sphongiun Display ir burtveidols piemērots virsrakstiem lielgabarīta izmēros. Tas veidots izgrebjot un plūkājot simbolus virtuves sūkļos, tālāk izmantojot tos kā akrila zīmogus.",
+    long_description_en: "Part of an assignment for typography studies in the Art Academy of Latvia, mentored by Ivs Zenne. Sphongiun Display is a font best used in large sizes. It's made by carving and plucking out symbols in kitchen sponges and then used as acrylic stamps."
+  },
+
+  {
+    id: 'H',
+    x: 4.5,
+    y: 2,
+    texture: 'textures/kocans_ilustracija_1.jpg',
+    size: 0.5,
+    childProximityRadius: 2.2,
+    childFadeRange: 0.8,
+    childFadeDuration: 220,
+
+    name: 'NEESAM VIENALDZĪGI!',
+    name_en: 'DO NOT BE INDIFFERENT!',
+    description: 'Ilustratīvu plakātu sērija. 2025.',
+    description_en: 'Illustrative poster collection. 2025.',
+    childSprites: [
+      { xOffset: 0.10, yOffset: 0, texture: 'textures/kocans_ilustracija_2.jpg', size: 0.3, heightScale: 0 },
+    ],
+    long_description: "Daļa no Latvijas Mākslas akadēmijas grafikas dizaina studijām, pasniedzēja Ella Mežule. Ilustrācijas iegūtas visaptverošā radošā procesā, ņemot kursabiedru 'aklos' portretu skices kā pamatu.",
+    long_description_en: "Part of an assignment for graphic design studies in the Art Academy of Latvia, mentored by Ella Mežule. The illustrations were created with a comprehensive creative process, using students 'blind' portrait sketches as a base."
   },
 
 ];
