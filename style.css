@@ -45,6 +45,28 @@ canvas {
     image-rendering: pixelated;
 }
 
+#lang-toggle {
+    position: fixed;
+    top: 40px;
+    left: 40px;
+    z-index: 15;
+    padding: 8px 10px;
+    border: 1px solid var(--primary-color);
+    background: var(--bg-color);
+    color: var(--primary-color);
+    font: italic 12px var(--font-family);
+    line-height: 1;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    cursor: inherit;
+}
+
+#lang-toggle.visible {
+    opacity: 1;
+    pointer-events: auto;
+}
+
 #hud {
     color: var(--primary-color);
     font-size: 12px;
@@ -54,7 +76,6 @@ canvas {
 
 #hud {
     background: var(--bg-color);
-    transition: background-color var(--bg-transition);
     position: fixed;
     top: 0;
     left: 0;
@@ -66,6 +87,58 @@ canvas {
     text-align: left;
     z-index: 11;
     opacity: 1;
+}
+
+#hud[data-mode="artwork"] {
+    background: transparent;
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    padding: 40px;
+}
+
+#hud[data-mode="artwork"] .hud-name {
+    display: block;
+    max-width: min(90vw, 20ch);
+    font-size: 100px;
+    line-height: 0.9;
+    font-weight: 700;
+    text-transform: lowercase;
+}
+
+#hud[data-mode="artwork"] .hud-description {
+    position: fixed;
+    right: 40px;
+    bottom: 40px;
+    max-width: min(50vw, 560px);
+    line-height: 1.4;
+    text-align: right;
+}
+
+#hud .hud-window {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: min(820px, calc(100vw - 80px));
+    max-height: calc(100vh - 120px);
+    overflow: auto;
+    padding: 28px;
+    background: var(--bg-color);
+    pointer-events: none;
+    opacity: 1;
+    transition: opacity 0.22s ease;
+}
+
+#hud .hud-window.is-closing {
+    opacity: 0;
+}
+
+#hud .hud-window-text {
+    font-size: 16px;
+    line-height: 1.5;
+    font-style: normal;
+    white-space: pre-wrap;
 }
 
 #hud.hidden {
@@ -104,6 +177,37 @@ canvas {
 @media (max-width: 600px) {
     body::before {
         border: 50px solid var(--bg-color);
+    }
+
+    #lang-toggle {
+        top: 20px;
+        left: 20px;
+    }
+
+    #hud[data-mode="artwork"] {
+        padding: 20px;
+    }
+
+    #hud[data-mode="artwork"] .hud-name {
+        font-size: 56px;
+        max-width: calc(100vw - 40px);
+    }
+
+    #hud[data-mode="artwork"] .hud-description {
+        right: 20px;
+        bottom: 20px;
+        max-width: calc(100vw - 40px);
+        font-size: 14px;
+    }
+
+    #hud .hud-window {
+        width: calc(100vw - 24px);
+        max-height: calc(100vh - 24px);
+        padding: 20px;
+    }
+
+    #hud .hud-window-text {
+        font-size: 14px;
     }
 
     #list {

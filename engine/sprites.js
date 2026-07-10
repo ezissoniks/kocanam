@@ -47,8 +47,13 @@ const BASE_SPRITES = [
     name_en: 'Putraimi book',
     description: 'Blakus izdevums albumam. 2026.',
     description_en: 'Publication for the album. 2026.',
+    childSprites: [
+      { xOffset: 0.10, yOffset: 0, texture: 'textures/pbook_1.png', size: 0.3, heightScale: 0 },
+      { xOffset: -0.10, yOffset: 0, texture: 'textures/pbook_3.png', size: 0.3, heightScale: 0 },
+      { xOffset: 0, yOffset: 0, texture: 'textures/pbook_2.png', size: 0.5, heightScale: 0 },
+    ],
     long_description: "Daļa no Latvijas Mākslas akadēmijas Datorprogrammu studijām, pasniedzēja Līga Dubrovska. Izdevuma mērķis ir attēlot paveikto darbu fizikālā mērvienībā. Iekļauti komentāri par mūzikas industriju un to kā paveiktais darbs netiek īpaši labi atalgots. Darbs tiek uzskatīts kā ‘putraimi’ - nopērkams liela kvantitātē par mazu cenu.",
-    long_description_en: "Part of an assignment for computer studies in the Art Academy of Latvia, mentored by LĪga Dubrovska. The goal was to depict album creation as a physical unit of measurement. It has commentary on the music industry and how artists do not get compensated justly. The effort of album creation is depicted as grain, which you purchase for cheap in large quantities."
+    long_description_en: "Part of an assignment for computer studies in the Art Academy of Latvia, mentored by Līga Dubrovska. The goal was to depict album creation as a physical unit of measurement. It has commentary on the music industry and how artists do not get compensated justly. The effort of album creation is depicted as grain, which you purchase for cheap in large quantities."
   },
 
   {
@@ -89,9 +94,11 @@ const BASE_SPRITES = [
     childSprites: [
       { xOffset: -0.10, yOffset: -0.05, texture: 'textures/spuldze25_insta_2.png', size: 0.18, heightScale: 0.1 },
       { xOffset: 0.10, yOffset: -0.05, texture: 'textures/spuldze_25_balle_insta.png', size: 0.18, heightScale: -0.1 },
-      { xOffset: -0.10, yOffset: 0.01, texture: 'textures/spuldze25_apsveikums.png', size: 0.28, heightScale: -0.1 },
-      { xOffset: 0.10, yOffset: -0.02, texture: 'textures/spuldze25_logo.png', size: 0.38, heightScale: 0.1 },
-      { xOffset: -0.10, yOffset: -0.02, texture: 'textures/spuldze25_2.png', size: 0.28, heightScale: 0 },
+      { xOffset: -0.10, yOffset: 0.01, texture: 'textures/spuldze25_2.png', size: 0.28, heightScale: -0.1 },
+      { xOffset: 0.10, yOffset: -0.02, texture: 'textures/spuldze24_1.png', size: 0.38, heightScale: 0.1 },
+      { xOffset: 0, yOffset: -0.02, texture: 'textures/spuldze24_2.png', size: 0.28, heightScale: 0},
+      { xOffset: -0.10, yOffset: -0.02, texture: 'textures/spuris.png', size: 0.28, heightScale: -0.1 },
+      { xOffset: 0, yOffset: 0, texture: 'textures/spuldze_2023.png', size: 0.5, heightScale: 0 },
     ],
     long_description: "SPULDZE ir ikgadējs Cēsu Valsts ğimnāzijas Skolēnu pašpārvalžu saliedēšanās pasākums, kura mērķis ir satikties ar citām pašpārvaldēm un pārrunāt aktualitātes un notikumus.",
     long_description_en: "SPULDZE is an annual Cēsis State gymnasium student council event. The event cultivates Latvian student council experience exchange."
@@ -101,7 +108,7 @@ const BASE_SPRITES = [
     id: 'F',
     x: 3.5,
     y: 2,
-    texture: 'textures/luize_2.png',
+    texture: 'textures/kakitis.png',
     size: 0.5,
     childProximityRadius: 2.2,
     childFadeRange: 0.8,
@@ -112,8 +119,9 @@ const BASE_SPRITES = [
     description: 'Konceptuāli dizaina pieteikumi jaunai produkcijai. 2024.',
     description_en: 'Design concepts for new products. 2024.',
     childSprites: [
-      { xOffset: 0.10, yOffset: 0, texture: 'textures/luize_1.png', size: 0.3, heightScale: 0 },
-      { xOffset: -0.10, yOffset: 0, texture: 'textures/luize_3.png', size: 0.3, heightScale: 0 },
+      { xOffset: 0.10, yOffset: 0, texture: 'textures/14_premium.png', size: 0.3, heightScale: 0 },
+      { xOffset: -0.10, yOffset: 0, texture: 'textures/capybara.png', size: 0.3, heightScale: 0 },
+      { xOffset: -0.10, yOffset: 0, texture: 'textures/summer.png', size: 0.3, heightScale: 0 },
     ],
     long_description: "Dizainu maketi veidoti saskaņā ar Cēsu Alus darbinieku inovāciju dienām.",
     long_description_en: "Product concept-art created for the Cēsu Alus internal innovation competition."
@@ -123,7 +131,7 @@ const BASE_SPRITES = [
     id: 'G',
     x: 4,
     y: 2,
-    texture: 'textures/luize_2.png',
+    texture: 'textures/sphongiun.png',
     size: 0.5,
     childProximityRadius: 2.2,
     childFadeRange: 0.8,
@@ -134,8 +142,9 @@ const BASE_SPRITES = [
     description: 'Displeja burtveidols izveidots ar analogiem paņēmieniem. 2025.',
     description_en: 'Display typeface created using analog techniques. 2025.',
     childSprites: [
-      { xOffset: 0.10, yOffset: 0, texture: 'textures/luize_1.png', size: 0.3, heightScale: 0 },
-      { xOffset: -0.10, yOffset: 0, texture: 'textures/luize_3.png', size: 0.3, heightScale: 0 },
+      { xOffset: 0.10, yOffset: 0, texture: 'textures/sphongiun_2.png', size: 0.3, heightScale: 0 },
+      { xOffset: -0.10, yOffset: 0, texture: 'textures/sphongiun_4.png', size: 0.3, heightScale: 0 },
+      { xOffset: 0, yOffset: 0, texture: 'textures/sphongiun_3.png', size: 0.5, heightScale: 0 },
     ],
     long_description: "Daļa no Latvijas Mākslas akadēmijas tipografikas studijām, pasniedzējs Ivs Zenne. Sphongiun Display ir burtveidols piemērots virsrakstiem lielgabarīta izmēros. Tas veidots izgrebjot un plūkājot simbolus virtuves sūkļos, tālāk izmantojot tos kā akrila zīmogus.",
     long_description_en: "Part of an assignment for typography studies in the Art Academy of Latvia, mentored by Ivs Zenne. Sphongiun Display is a font best used in large sizes. It's made by carving and plucking out symbols in kitchen sponges and then used as acrylic stamps."
@@ -223,8 +232,8 @@ export function spawnChildSprites(parentId, playerX, playerY, maxVisible = 3) {
       radius: parent.childProximityRadius ?? 2.2,
       fadeRange: parent.childFadeRange ?? 0.8,
       duration: parent.childFadeDuration ?? 220,
-      _value: 0,
-      _from: 0,
+      _value: 1,
+      _from: 1,
       _target: 1,
       _start: performance.now()
     }
