@@ -6,13 +6,15 @@ const BASE_SPRITES = [
     texture: '',
     size: 0.3,
     heightScale: 1.0,
-    screenSize: true
+    screenSize: true,
+    long_description: 'čau,\nEs esmu Kočāns Miķelis, Latvijas Mākslas akadēmijas grafikas dizaina students. Esiet sveicināti manā dizaina portfolio! Man patīk veidot afišas un ņemties ar tipografiku, bet esmu gatavs darīt visu apkārt dizainam! Vienmēr pievēršu īpašu uzmanību detaļām un ar dizainu mēģinu risināt problēmas.\n\nKusties ar bultiņām un izbaudi!',
+    long_description_en: 'hi,\nI am Kočāns Miķelis (Mike), and I study graphic design at the Art Academy of Latvia. Welcome to my design portfolio! I enjoy creating posters and working with typography, but I am ready to work on anything around design. I always pay close attention to details and try to solve problems with design.\n\nUse the arrow keys to move around and enjoy!',
   },
 
   {
     id: 'B',
-    x: 1,
-    y: 2,
+    x: 3.5,
+    y: 3.5,
     texture: 'textures/putraimi.png',
     size: 0.5,
     childProximityRadius: 2.2,
@@ -26,7 +28,7 @@ const BASE_SPRITES = [
       { xOffset: 0.10, yOffset: -0.05, texture: 'textures/ceturta.png', size: 0.18, heightScale: -0.1 },
       { xOffset: -0.10, yOffset: 0.01, texture: 'textures/disc (1).jpg', size: 0.28, heightScale: -0.1 },
       { xOffset: 0.10, yOffset: -0.02, texture: 'textures/disc (2).jpg', size: 0.38, heightScale: 0.1 },
-      { xOffset: 0.10, yOffset: -0.02, texture: 'textures/putraimi_disc.png', size: 0.28, heightScale: 0 },
+      { xOffset: 0.10, yOffset: 0, texture: 'textures/putraimi_disc.png', size: 0.28, heightScale: 0 },
       { xOffset: -0.10, yOffset: -0.02, texture: 'textures/disc (3).jpg', size: 0.28, heightScale: 0 },
       { xOffset: 0, yOffset: 0.06, texture: 'textures/disc (4).jpg', size: 0.35, heightScale: 0 },
     ],
@@ -36,9 +38,9 @@ const BASE_SPRITES = [
 
   {
     id: 'C',
-    x: 1.5,
-    y: 2,
-    texture: 'textures/disc (5).jpg',
+    x: 3.5,
+    y: 5.5,
+    texture: 'textures/disc (5).png',
     size: 0.5,
     childProximityRadius: 2.2,
     childFadeRange: 0.8,
@@ -50,7 +52,7 @@ const BASE_SPRITES = [
     childSprites: [
       { xOffset: 0.10, yOffset: 0, texture: 'textures/pbook_1.png', size: 0.3, heightScale: 0 },
       { xOffset: -0.10, yOffset: 0, texture: 'textures/pbook_3.png', size: 0.3, heightScale: 0 },
-      { xOffset: 0, yOffset: 0, texture: 'textures/pbook_2.png', size: 0.5, heightScale: 0 },
+      { xOffset: 0, yOffset: 0.1, texture: 'textures/pbook_2.png', size: 0.5, heightScale: 0 },
     ],
     long_description: "Daļa no Latvijas Mākslas akadēmijas Datorprogrammu studijām, pasniedzēja Līga Dubrovska. Izdevuma mērķis ir attēlot paveikto darbu fizikālā mērvienībā. Iekļauti komentāri par mūzikas industriju un to kā paveiktais darbs netiek īpaši labi atalgots. Darbs tiek uzskatīts kā ‘putraimi’ - nopērkams liela kvantitātē par mazu cenu.",
     long_description_en: "Part of an assignment for computer studies in the Art Academy of Latvia, mentored by Līga Dubrovska. The goal was to depict album creation as a physical unit of measurement. It has commentary on the music industry and how artists do not get compensated justly. The effort of album creation is depicted as grain, which you purchase for cheap in large quantities."
@@ -58,8 +60,8 @@ const BASE_SPRITES = [
 
   {
     id: 'D',
-    x: 2,
-    y: 2,
+    x: 2.2,
+    y: 4.0,
     texture: 'textures/luize_2.png',
     size: 0.5,
     childProximityRadius: 2.2,
@@ -80,8 +82,8 @@ const BASE_SPRITES = [
 
   {
     id: 'E',
-    x: 3,
-    y: 2,
+    x: 4.6,
+    y: 4.2,
     texture: 'textures/spuldze25_insta_1.png',
     size: 0.5,
     childProximityRadius: 2.2,
@@ -92,13 +94,13 @@ const BASE_SPRITES = [
     description: 'Vizuālā identitāte skolēnu pašvaldību forumam. 2023-2025.',
     description_en: 'Visual identity for a school council forum. 2023-2025.',
     childSprites: [
-      { xOffset: -0.10, yOffset: -0.05, texture: 'textures/spuldze25_insta_2.png', size: 0.18, heightScale: 0.1 },
-      { xOffset: 0.10, yOffset: -0.05, texture: 'textures/spuldze_25_balle_insta.png', size: 0.18, heightScale: -0.1 },
+      { xOffset: -0.10, yOffset: -0.05, texture: 'textures/spuldze25_insta_2.png', size: 0.28, heightScale: 0.1 },
+      { xOffset: 0.10, yOffset: -0.05, texture: 'textures/spuldze_25_balle_insta.png', size: 0.28, heightScale: -0.1 },
       { xOffset: -0.10, yOffset: 0.01, texture: 'textures/spuldze25_2.png', size: 0.28, heightScale: -0.1 },
-      { xOffset: 0.10, yOffset: -0.02, texture: 'textures/spuldze24_1.png', size: 0.38, heightScale: 0.1 },
-      { xOffset: 0, yOffset: -0.02, texture: 'textures/spuldze24_2.png', size: 0.28, heightScale: 0},
-      { xOffset: -0.10, yOffset: -0.02, texture: 'textures/spuris.png', size: 0.28, heightScale: -0.1 },
-      { xOffset: 0, yOffset: 0, texture: 'textures/spuldze_2023.png', size: 0.5, heightScale: 0 },
+      { xOffset: 0, yOffset: 0.04, texture: 'textures/spuldze24_1.png', size: 0.38, heightScale: 0},
+      { xOffset: 0.10, yOffset: 0.05, texture: 'textures/spuldze24_2.png', size: 0.38, heightScale: 0.1 },
+      { xOffset: -0.10, yOffset: 0.05, texture: 'textures/spuris.png', size: 0.28, heightScale: -0.1 },
+      { xOffset: 0, yOffset: 0.07, texture: 'textures/spuldze_2023.png', size: 0.5, heightScale: 0 },
     ],
     long_description: "SPULDZE ir ikgadējs Cēsu Valsts ğimnāzijas Skolēnu pašpārvalžu saliedēšanās pasākums, kura mērķis ir satikties ar citām pašpārvaldēm un pārrunāt aktualitātes un notikumus.",
     long_description_en: "SPULDZE is an annual Cēsis State gymnasium student council event. The event cultivates Latvian student council experience exchange."
@@ -106,22 +108,22 @@ const BASE_SPRITES = [
 
   {
     id: 'F',
-    x: 3.5,
-    y: 2,
+    x: 1.6,
+    y: 6.3,
     texture: 'textures/kakitis.png',
     size: 0.5,
     childProximityRadius: 2.2,
     childFadeRange: 0.8,
     childFadeDuration: 220,
 
-    name: 'Cēsu Alus etiķešu dizainu maketi',
+    name: 'Cēsu Alus etiķešu maketi',
     name_en: 'Cēsu Alus product design mock-ups',
     description: 'Konceptuāli dizaina pieteikumi jaunai produkcijai. 2024.',
     description_en: 'Design concepts for new products. 2024.',
     childSprites: [
       { xOffset: 0.10, yOffset: 0, texture: 'textures/14_premium.png', size: 0.3, heightScale: 0 },
-      { xOffset: -0.10, yOffset: 0, texture: 'textures/capybara.png', size: 0.3, heightScale: 0 },
-      { xOffset: -0.10, yOffset: 0, texture: 'textures/summer.png', size: 0.3, heightScale: 0 },
+      { xOffset: -0.10, yOffset: 0, texture: 'textures/capybara.png', size: 0.25, heightScale: -0.02 },
+      { xOffset: 0, yOffset: 0.2, texture: 'textures/summer.png', size: 0.5, heightScale: 0.05},
     ],
     long_description: "Dizainu maketi veidoti saskaņā ar Cēsu Alus darbinieku inovāciju dienām.",
     long_description_en: "Product concept-art created for the Cēsu Alus internal innovation competition."
@@ -129,8 +131,8 @@ const BASE_SPRITES = [
 
   {
     id: 'G',
-    x: 4,
-    y: 2,
+    x: 3.5,
+    y: 8,
     texture: 'textures/sphongiun.png',
     size: 0.5,
     childProximityRadius: 2.2,
@@ -142,9 +144,9 @@ const BASE_SPRITES = [
     description: 'Displeja burtveidols izveidots ar analogiem paņēmieniem. 2025.',
     description_en: 'Display typeface created using analog techniques. 2025.',
     childSprites: [
-      { xOffset: 0.10, yOffset: 0, texture: 'textures/sphongiun_2.png', size: 0.3, heightScale: 0 },
-      { xOffset: -0.10, yOffset: 0, texture: 'textures/sphongiun_4.png', size: 0.3, heightScale: 0 },
-      { xOffset: 0, yOffset: 0, texture: 'textures/sphongiun_3.png', size: 0.5, heightScale: 0 },
+      { xOffset: 0.10, yOffset: -0.05, texture: 'textures/sphongiun_2.png', size: 0.3, heightScale: 0 },
+      { xOffset: -0.10, yOffset: -0.05, texture: 'textures/sphongiun_4.png', size: 0.3, heightScale: 0 },
+      { xOffset: 0, yOffset: 0.1, texture: 'textures/sphongiun_3.png', size: 0.4, heightScale: 0 },
     ],
     long_description: "Daļa no Latvijas Mākslas akadēmijas tipografikas studijām, pasniedzējs Ivs Zenne. Sphongiun Display ir burtveidols piemērots virsrakstiem lielgabarīta izmēros. Tas veidots izgrebjot un plūkājot simbolus virtuves sūkļos, tālāk izmantojot tos kā akrila zīmogus.",
     long_description_en: "Part of an assignment for typography studies in the Art Academy of Latvia, mentored by Ivs Zenne. Sphongiun Display is a font best used in large sizes. It's made by carving and plucking out symbols in kitchen sponges and then used as acrylic stamps."
@@ -152,8 +154,8 @@ const BASE_SPRITES = [
 
   {
     id: 'H',
-    x: 4.5,
-    y: 2,
+    x: 5.0,
+    y: 6.6,
     texture: 'textures/kocans_ilustracija_1.jpg',
     size: 0.5,
     childProximityRadius: 2.2,
@@ -218,8 +220,9 @@ export function spawnChildSprites(parentId, playerX, playerY, maxVisible = 3) {
   const forwardY = toPlayerY / toPlayerLen;
   const sideX = -forwardY;
   const sideY = forwardX;
-  const frontDistance = t.frontDistance ?? (0.35 + (t.yOffset ?? 0));
-  const sideOffset = t.sideOffset ?? (t.xOffset ?? 0);
+  const childDistanceScale = parent.childDistanceScale ?? 1;
+  const frontDistance = (t.frontDistance ?? (0.35 + (t.yOffset ?? 0))) * childDistanceScale;
+  const sideOffset = (t.sideOffset ?? (t.xOffset ?? 0)) * childDistanceScale;
 
   SPRITES.push({
     ...t,

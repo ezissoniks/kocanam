@@ -14,7 +14,7 @@ move with arrows
 
 --
 
-Čau, esiet sveicināti manā dizaina portfolio! 
+Čau, Esiet sveicināti manā dizaina portfolio! 
 
 Es esmu Kočāns Miķelis, Latvijas Mākslas akadēmijas grafikas dizaina students. 
 
@@ -24,7 +24,7 @@ Vienmēr pievēršu īpašību uzmanību detaļām un risinu vairāk problēmas,
 
 --
 
-Hi, greetings to my design portfolio!
+Hi, Welcome to my design portfolio!
 
 I am Kočāns Miķelis (Mike) and I study graphic design in the Art Academy of Latvia.
 
