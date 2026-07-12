@@ -23,7 +23,6 @@ const ARTWORK_HOLD_RADIUS_EXTRA = 0.3;
 const ARTWORK_SWITCH_DEBOUNCE_MS = 160;
 const ARTWORK_LOST_GRACE_MS = 240;
 const DETAILS_WINDOW_FADE_MS = 220;
-const IDLE_ARROWS_DELAY_MS = 15_000;
 const CLICK_PROMPT_DELAY_MS = 30_000;
 const INTRO_TEXT_WINDOW_STEP_MS = 5_000;
 const INTRO_TEXT_WINDOW_GAP_MS = 30_000;
@@ -40,7 +39,6 @@ let pendingArtwork = null;
 let pendingArtworkSince = 0;
 let artworkLostSince = 0;
 let language = 'lv';
-let lastMovementAt = performance.now();
 let introWindowStepTimeout = null;
 let introWindowLoopTimeout = null;
 let introWindowHideTimeout = null;
@@ -411,7 +409,7 @@ const registerPointerInteraction = () => {
   }
 };
 
-const updateIdleArrows = (now, movedThisFrame, hasNonIntroProximity) => {
+const updateIdleArrows = () => {
   if (introIdleArrowsWithMessage) {
     idleArrows.style.display = 'block';
     idleArrows.classList.add('visible');
@@ -420,15 +418,7 @@ const updateIdleArrows = (now, movedThisFrame, hasNonIntroProximity) => {
 
   idleArrows.style.display = '';
   idleArrows.classList.remove('intro-sync-fade');
-
-  if (!isIdleArrowsMobileContext()) {
-    idleArrows.classList.remove('visible');
-    return;
-  }
-
-  if (movedThisFrame) lastMovementAt = now;
-  const shouldShow = !hasNonIntroProximity && now - lastMovementAt >= IDLE_ARROWS_DELAY_MS;
-  idleArrows.classList.toggle('visible', shouldShow);
+  idleArrows.classList.remove('visible');
 };
 
 const updateClickPrompt = (now, hasNonIntroProximity) => {
@@ -564,9 +554,6 @@ languageButton.addEventListener('click', () => {
 
 const update = () => {
   const p = player;
-  const startX = p.x;
-  const startY = p.y;
-  const startAngle = p.angle;
   const rotLeft = keys['a'] || keys['arrowleft'] || touch.rotateLeft;
   const rotRight = keys['d'] || keys['arrowright'] || touch.rotateRight;
   const moveForward = keys['w'] || keys['arrowup'] || touch.forward;
@@ -591,10 +578,9 @@ const update = () => {
   const proximityRadius = 1;
   checkProximity(p.x, p.y, proximityRadius, cosAngle, sinAngle);
   ensureIntroTextWindowState();
-  const movedThisFrame = Math.abs(p.x - startX) > 0.0001 || Math.abs(p.y - startY) > 0.0001 || Math.abs(p.angle - startAngle) > 0.0001;
   const hasNonIntroProximity = Boolean(currentArtwork?.id && currentArtwork.id !== INTRO_SPRITE_ID);
   const frameNow = performance.now();
-  updateIdleArrows(frameNow, movedThisFrame, hasNonIntroProximity);
+  updateIdleArrows();
   updateClickPrompt(frameNow, hasNonIntroProximity);
   renderFrame(canvas, p.x, p.y, p.angle);
   if (currentArtwork !== previousArtwork) {
