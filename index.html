@@ -7,6 +7,11 @@
     <link rel="icon" type="image/x-icon" href="textures/kocans_light.ico">
     <link rel="icon" type="image/x-icon" href="textures/kocans_light.ico" media="(prefers-color-scheme: light)">
     <link rel="icon" type="image/x-icon" href="textures/kocans_dark.ico" media="(prefers-color-scheme: dark)">
+    <script>
+        if (window.location.hostname === 'portfolio.kocan.am' && (window.location.pathname === '/' || window.location.pathname === '/index.html')) {
+            window.location.replace('/portfolio.html');
+        }
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital@1&display=swap" rel="stylesheet">

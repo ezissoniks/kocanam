@@ -48,8 +48,9 @@ let introWindowToken = 0;
 let introWindowRunning = false;
 let introWindowRestartPending = false;
 let introIdleArrowsWithMessage = false;
-let lastPointerInteractionAt = performance.now();
 let clickPromptDisabled = false;
+let clickPromptTargetId = null;
+let clickPromptStartedAt = 0;
 
 const languageButton = document.createElement('button');
 languageButton.id = 'lang-toggle';
@@ -400,7 +401,10 @@ const getClickPromptText = () => {
 };
 
 const registerPointerInteraction = () => {
-  lastPointerInteractionAt = performance.now();
+  if (currentArtwork?.id && currentArtwork.id !== INTRO_SPRITE_ID) {
+    clickPromptTargetId = currentArtwork.id;
+    clickPromptStartedAt = performance.now();
+  }
   if (clickPrompt.classList.contains('visible')) {
     clickPromptDisabled = true;
     clickPrompt.classList.remove('visible');
@@ -429,11 +433,28 @@ const updateIdleArrows = (now, movedThisFrame, hasNonIntroProximity) => {
 
 const updateClickPrompt = (now, hasNonIntroProximity) => {
   if (clickPromptDisabled || !hasNonIntroProximity) {
+    clickPromptTargetId = null;
+    clickPromptStartedAt = 0;
     clickPrompt.classList.remove('visible');
     return;
   }
 
-  const shouldShow = now - lastPointerInteractionAt >= CLICK_PROMPT_DELAY_MS;
+  const targetId = currentArtwork?.id ?? null;
+  if (!targetId || targetId === INTRO_SPRITE_ID) {
+    clickPromptTargetId = null;
+    clickPromptStartedAt = 0;
+    clickPrompt.classList.remove('visible');
+    return;
+  }
+
+  if (clickPromptTargetId !== targetId || !clickPromptStartedAt) {
+    clickPromptTargetId = targetId;
+    clickPromptStartedAt = now;
+    clickPrompt.classList.remove('visible');
+    return;
+  }
+
+  const shouldShow = now - clickPromptStartedAt >= CLICK_PROMPT_DELAY_MS;
   if (!shouldShow) {
     clickPrompt.classList.remove('visible');
     return;
