@@ -1,0 +1,14 @@
+{
+  "rewrites": [
+    {
+      "source": "/",
+      "has": [
+        {
+          "type": "host",
+          "value": "portfolio.kocan.am"
+        }
+      ],
+      "destination": "/portfolio.html"
+    }
+  ]
+}
