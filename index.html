@@ -8,7 +8,11 @@
     <link rel="icon" type="image/x-icon" href="textures/kocans_light.ico" media="(prefers-color-scheme: light)">
     <link rel="icon" type="image/x-icon" href="textures/kocans_dark.ico" media="(prefers-color-scheme: dark)">
     <script>
-        if (window.location.hostname === 'portfolio.kocan.am' && (window.location.pathname === '/' || window.location.pathname === '/index.html')) {
+        const allowMainPage = new URLSearchParams(window.location.search).get('home') === '1';
+        if (allowMainPage) {
+            history.replaceState(null, '', window.location.pathname + window.location.hash);
+        }
+        if (!allowMainPage && window.location.hostname === 'portfolio.kocan.am' && (window.location.pathname === '/' || window.location.pathname === '/index.html')) {
             window.location.replace('/portfolio.html');
         }
     </script>

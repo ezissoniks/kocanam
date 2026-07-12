@@ -661,7 +661,7 @@ gameLogo.addEventListener('pointerdown', evt => {
   // Fade out before returning to the index page.
   document.body.classList.remove('loaded');
   setTimeout(() => {
-    window.location.href = 'index.html';
+    window.location.href = 'index.html?home=1';
   }, NAVIGATION_FADE_MS);
 });
 
