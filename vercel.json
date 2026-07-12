@@ -1,17 +1,4 @@
 {
-  "redirects": [
-    {
-      "source": "/portfolio.html",
-      "has": [
-        {
-          "type": "host",
-          "value": "portfolio.kocan.am"
-        }
-      ],
-      "destination": "/",
-      "permanent": true
-    }
-  ],
   "rewrites": [
     {
       "source": "/",
