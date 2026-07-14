@@ -221,7 +221,13 @@ const setCanvasSize = () => {
   canvas.width = Math.max(1, Math.floor(vw * renderScale));
   canvas.height = Math.max(1, Math.floor(vh * renderScale));
 };
-['load', 'resize'].forEach(e => window.addEventListener(e, setCanvasSize));
+const scheduleCanvasSizeSync = () => {
+  setCanvasSize();
+  requestAnimationFrame(setCanvasSize);
+};
+
+['load', 'resize', 'orientationchange'].forEach(e => window.addEventListener(e, scheduleCanvasSizeSync));
+window.visualViewport?.addEventListener('resize', scheduleCanvasSizeSync);
 window.addEventListener('load', () => document.body.classList.add('loaded'));
 setCanvasSize();
 updateLanguageToggleUi();

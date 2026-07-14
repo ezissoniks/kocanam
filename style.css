@@ -233,8 +233,9 @@ canvas {
     }
 
     #list {
-        top: 20px;
-        transform: translateX(-50%);
+        top: 50%;
+        transform: translate(-50%, -50%) scale(1.05);
+        transform-origin: center;
         max-height: calc(100vh - 40px);
         overflow-y: auto;
         scrollbar-width: none;
@@ -595,7 +596,7 @@ canvas {
     cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='6' height='6'%3E%3Ccircle cx='3' cy='3' r='3' fill='%233C2828'/%3E%3C/svg%3E") 3 3, pointer;
 }
 
-@media (max-width: 1100px) and (orientation: portrait) {
+@media (max-width: 980px) and (orientation: portrait) {
     #click-prompt .click-arrow {
         font-size: 60px;
     }
@@ -660,7 +661,9 @@ canvas {
     }
 
     #list {
-        top: 12px;
+        top: 50%;
+        transform: translate(-50%, -50%) scale(1.05);
+        transform-origin: center;
         max-width: calc(100vw - 24px);
         max-height: calc(100vh - 24px);
         padding: 12px;
