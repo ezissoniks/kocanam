@@ -1,20 +1,46 @@
+const PLAYER_START_X = 3.5;
+const PLAYER_START_Y = 1;
+const SPRITE_PUSH_DISTANCE = 2;
+
+const moveSpriteAwayFromPlayer = sprite => {
+  const dx = sprite.x - PLAYER_START_X;
+  const dy = sprite.y - PLAYER_START_Y;
+  const distance = Math.hypot(dx, dy);
+
+  // If a sprite is on/near the player, bias the push downward to keep it reachable.
+  const dirX = distance > 0.0001 ? dx / distance : 0;
+  const dirY = distance > 0.0001 ? dy / distance : 1;
+
+  const movedX = sprite.x + dirX * SPRITE_PUSH_DISTANCE;
+  const movedY = sprite.y + dirY * SPRITE_PUSH_DISTANCE;
+
+  return {
+    ...sprite,
+    x: movedX,
+    y: movedY
+  };
+};
+
 const BASE_SPRITES = [
   {
     id: 'A',
-    x: 3.5,
-    y: 0.8,
+    x: 0,
+    y: 0,
     texture: '',
     size: 0.3,
     heightScale: 1.0,
     screenSize: true,
-    long_description: 'čau,\nEs esmu Kočāns Miķelis, Latvijas Mākslas akadēmijas grafikas dizaina students. Esiet sveicināti manā dizaina portfolio! Man patīk veidot afišas un ņemties ar tipografiku, bet esmu gatavs darīt visu apkārt dizainam! Vienmēr pievēršu īpašu uzmanību detaļām un ar dizainu mēģinu risināt problēmas.\n\nKusties ar bultiņām un izbaudi!',
-    long_description_en: 'hi,\nI am Kočāns Miķelis (Mike), and I study graphic design at the Art Academy of Latvia. Welcome to my design portfolio! I enjoy creating posters and working with typography, but I am ready to work on anything around design. I always pay close attention to details and try to solve problems with design.\n\nUse the arrow keys to move around and enjoy!',
+    long_description: 'čau,\n\nEs esmu Kočāns Miķelis, Latvijas Mākslas akadēmijas grafikas dizaina students. Esiet sveicināti manā dizaina portfolio! Man patīk veidot afišas un ņemties ar tipografiku, bet esmu gatavs darīt visu apkārt dizainam! Vienmēr pievēršu īpašu uzmanību detaļām un ar dizainu mēģinu risināt problēmas.\n\nKusties ar 🡨🡩🡫🡪 un izbaudi!',
+    long_description_en: 'hi,\n\nI am Kočāns Miķelis (Mike), and I study graphic design at the Art Academy of Latvia. Welcome to my design portfolio! I enjoy creating posters and working with typography, but I am ready to work on anything around design. I always pay close attention to details and try to solve problems with design.\n\nMove with 🡨🡩🡫🡪 and enjoy!',
+    m_long_description: 'čau,\n\nEs esmu Kočāns Miķelis, Latvijas Mākslas akadēmijas grafikas dizaina students. Esiet sveicināti manā dizaina portfolio! Man patīk veidot afišas un ņemties ar tipografiku, bet esmu gatavs darīt visu apkārt dizainam! Vienmēr pievēršu īpašu uzmanību detaļām un ar dizainu mēģinu risināt problēmas.\n\nVelc ⮂, lai grieztos, un velc ⤢, lai kustētos!',
+    m_long_description_en: 'hi,\n\nI am Kočāns Miķelis (Mike), and I study graphic design at the Art Academy of Latvia. Welcome to my design portfolio! I enjoy creating posters and working with typography, but I am ready to work on anything around design. I always pay close attention to details and try to solve problems with design.\n\nSwipe ⮂ to rotate, and pinch ⤢ to move!',
+  
   },
 
   {
     id: 'B',
     x: 3.5,
-    y: 3.5,
+    y: 2,
     texture: 'textures/putraimi.png',
     size: 0.5,
     childProximityRadius: 2.2,
@@ -60,7 +86,7 @@ const BASE_SPRITES = [
 
   {
     id: 'D',
-    x: 2.2,
+    x: 2.5,
     y: 4.0,
     texture: 'textures/luize_2.png',
     size: 0.5,
@@ -82,8 +108,8 @@ const BASE_SPRITES = [
 
   {
     id: 'E',
-    x: 4.6,
-    y: 4.2,
+    x: 4.5,
+    y: 4.0,
     texture: 'textures/spuldze25_insta_1.png',
     size: 0.5,
     childProximityRadius: 2.2,
@@ -91,7 +117,7 @@ const BASE_SPRITES = [
     childFadeDuration: 220,
 
     name: 'SPULDZE',
-    description: 'Vizuālā identitāte skolēnu pašvaldību forumam. 2023-2025.',
+    description: 'Vizuālā identitāte skolēnu pašpārvalžu forumam. 2023-2025.',
     description_en: 'Visual identity for a school council forum. 2023-2025.',
     childSprites: [
       { xOffset: -0.10, yOffset: -0.05, texture: 'textures/spuldze25_insta_2.png', size: 0.28, heightScale: 0.1 },
@@ -108,8 +134,8 @@ const BASE_SPRITES = [
 
   {
     id: 'F',
-    x: 1.6,
-    y: 6.3,
+    x: 2,
+    y: 6.5,
     texture: 'textures/kakitis.png',
     size: 0.5,
     childProximityRadius: 2.2,
@@ -155,7 +181,7 @@ const BASE_SPRITES = [
   {
     id: 'H',
     x: 5.0,
-    y: 6.6,
+    y: 6.5,
     texture: 'textures/kocans_ilustracija_1.jpg',
     size: 0.5,
     childProximityRadius: 2.2,
@@ -173,7 +199,7 @@ const BASE_SPRITES = [
     long_description_en: "Part of an assignment for graphic design studies in the Art Academy of Latvia, mentored by Ella Mežule. The illustrations were created with a comprehensive creative process, using students 'blind' portrait sketches as a base."
   },
 
-];
+].map(moveSpriteAwayFromPlayer);
 
 export const SPRITES = BASE_SPRITES.slice();
 

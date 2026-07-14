@@ -2,7 +2,7 @@ import { player } from "./engine/player.js";
 import { keys } from "./engine/input.js";
 import { isWall } from "./engine/collision.js";
 import { renderFrame } from "./engine/raycaster.js";
-import { clearChildSprites, getAllSprites, spawnChildSprites } from "./engine/sprites.js";
+import { clearChildSprites, getAllSprites, getSpriteById, spawnChildSprites } from "./engine/sprites.js";
 import { isDeadZoneTouch, touch } from "./engine/touch.js";
 const [canvas, hud, gameLogo] = ['gameCanvas', 'hud', 'game-logo']
   .map(id => document.getElementById(id));
@@ -10,6 +10,7 @@ const FOV = Math.PI / 3;
 const COS_HALF_FOV = Math.cos(FOV / 2);
 const MAX_RENDER_PIXELS = 1_800_000;
 const MIN_RENDER_SCALE = 0.5;
+const MOBILE_MIN_RENDER_SCALE = 0.72;
 const INTRO_SPRITE_ID = 'A';
 const PORTFOLIO_TITLES = {
   lv: 'Kočāns - dizaina portfolio',
@@ -23,14 +24,17 @@ const ARTWORK_HOLD_RADIUS_EXTRA = 0.3;
 const ARTWORK_SWITCH_DEBOUNCE_MS = 160;
 const ARTWORK_LOST_GRACE_MS = 240;
 const DETAILS_WINDOW_FADE_MS = 220;
-const CLICK_PROMPT_DELAY_MS = 30_000;
+const CLICK_PROMPT_DELAY_MS = 5_000;
 const INTRO_TEXT_WINDOW_STEP_MS = 5_000;
 const INTRO_TEXT_WINDOW_GAP_MS = 30_000;
 const INTRO_TEXT_WINDOW_BG_FADE_MS = 450;
+const INTRO_AUTO_MOVE_DISTANCE = 1;
 const NAVIGATION_FADE_MS = 450;
 const INTRO_PROXIMITY_SCALE = 0.7;
+const MOBILE_ENTITY_SCALE = 0.7;
 const TOUCH_TAP_MAX_MOVE_PX = 12;
 const TOUCH_TAP_MAX_DURATION_MS = 300;
+const IDLE_VELOCITY_EPSILON = 0.001;
 let [currentArtwork, previousArtwork] = [null, null];
 let [typewriterIndex, typewriterText, typewriterTimeout] = [0, '', null];
 let proximityTimeout = null;
@@ -46,9 +50,11 @@ let introWindowLoopTimeout = null;
 let introWindowHideTimeout = null;
 let introWindowToken = 0;
 let introWindowRunning = false;
+let introWindowPlayedOnSpawn = false;
+let introAutoMoveRemaining = 0;
 let introWindowRestartPending = false;
-let introIdleArrowsWithMessage = false;
 let clickPromptDisabled = false;
+let clickPromptShownOnce = false;
 let clickPromptTargetId = null;
 let clickPromptStartedAt = 0;
 const touchTapCandidates = new Map();
@@ -61,13 +67,13 @@ document.body.appendChild(languageButton);
 const idleArrows = document.createElement('div');
 idleArrows.id = 'idle-arrows';
 idleArrows.setAttribute('aria-hidden', 'true');
-idleArrows.innerHTML = '<span class="idle-arrow top">↑</span><span class="idle-arrow right">↑</span><span class="idle-arrow bottom">↑</span><span class="idle-arrow left">↑</span>';
+idleArrows.innerHTML = '<span class="idle-arrow right">↑</span><span class="idle-arrow left">↑</span>';
 document.body.appendChild(idleArrows);
 
 const clickPrompt = document.createElement('div');
 clickPrompt.id = 'click-prompt';
 clickPrompt.setAttribute('aria-hidden', 'true');
-clickPrompt.innerHTML = '<span class="click-arrow top">↑</span><span class="click-arrow right">↑</span><span class="click-arrow bottom">↑</span><span class="click-arrow left">↑</span>';
+clickPrompt.innerHTML = '<span class="click-arrow right">↑</span><span class="click-arrow left">↑</span>';
 document.body.appendChild(clickPrompt);
 
 const introTextWindow = document.createElement('div');
@@ -99,8 +105,8 @@ const updateMainPageTooltip = () => {
 };
 
 const getIntroWindowMessages = () => language === 'en'
-  ? ['ENOUGH SWIPING', 'ENJOY THE SPACE']
-  : ['PIETIEK GLĀSTĪT', 'IZBAUDI TELPU'];
+  ? ['ENJOY THE SPACE']
+  : ['IZBAUDI TELPU'];
 
 const updateLanguageToggleVisibility = () => {
   languageButton.classList.toggle('visible', currentArtwork?.id === INTRO_SPRITE_ID);
@@ -119,9 +125,6 @@ const stopIntroTextWindow = () => {
   if (!introWindowRunning && !introTextWindow.classList.contains('active')) return;
 
   introWindowRunning = false;
-  introIdleArrowsWithMessage = false;
-  idleArrows.style.display = '';
-  idleArrows.classList.remove('intro-sync-fade');
   introWindowToken++;
   clearIntroWindowTimers();
 
@@ -168,14 +171,6 @@ const runIntroTextWindowStep = (stepIndex, token) => {
   if (!introWindowRunning || token !== introWindowToken) return;
 
   const messages = getIntroWindowMessages();
-  introIdleArrowsWithMessage = stepIndex === 1;
-  if (introIdleArrowsWithMessage) {
-    idleArrows.classList.remove('intro-sync-fade');
-    void idleArrows.offsetWidth;
-    idleArrows.classList.add('intro-sync-fade');
-  } else {
-    idleArrows.classList.remove('intro-sync-fade');
-  }
   introTextWindowLabel.textContent = messages[stepIndex] ?? '';
   introTextWindow.classList.add('active');
   introTextWindowLabel.classList.remove('is-animating');
@@ -185,7 +180,6 @@ const runIntroTextWindowStep = (stepIndex, token) => {
   introWindowStepTimeout = setTimeout(() => {
     if (!introWindowRunning || token !== introWindowToken) return;
     introTextWindowLabel.classList.remove('is-animating');
-    introIdleArrowsWithMessage = false;
 
     if (introWindowRestartPending) {
       introWindowRestartPending = false;
@@ -198,23 +192,20 @@ const runIntroTextWindowStep = (stepIndex, token) => {
       runIntroTextWindowStep(nextStep, token);
       return;
     }
+    introAutoMoveRemaining = INTRO_AUTO_MOVE_DISTANCE;
     hideIntroTextWindowBackground(token, () => {
-      introWindowLoopTimeout = setTimeout(() => {
-        if (!introWindowRunning || token !== introWindowToken) return;
-        startIntroTextWindowCycle(token, true);
-      }, INTRO_TEXT_WINDOW_GAP_MS);
+      introWindowRunning = false;
+      introWindowLoopTimeout = null;
     });
   }, INTRO_TEXT_WINDOW_STEP_MS);
 };
 
 const ensureIntroTextWindowState = () => {
-  if (currentArtwork?.id !== INTRO_SPRITE_ID) {
-    if (introWindowRunning) stopIntroTextWindow();
-    return;
-  }
-
   if (introWindowRunning) return;
+  if (introWindowPlayedOnSpawn) return;
+
   introWindowRunning = true;
+  introWindowPlayedOnSpawn = true;
   introWindowToken++;
   startIntroTextWindowCycle(introWindowToken, false);
 };
@@ -223,8 +214,10 @@ const setCanvasSize = () => {
   const vw = window.innerWidth;
   const vh = window.innerHeight;
   const pixelCount = vw * vh;
+  const isMobileViewport = touch.isMobile || window.matchMedia?.('(pointer: coarse)').matches;
   const autoScale = pixelCount > MAX_RENDER_PIXELS ? Math.sqrt(MAX_RENDER_PIXELS / pixelCount) : 1;
-  const renderScale = Math.max(MIN_RENDER_SCALE, Math.min(1, autoScale));
+  const minRenderScale = isMobileViewport ? MOBILE_MIN_RENDER_SCALE : MIN_RENDER_SCALE;
+  const renderScale = Math.max(minRenderScale, Math.min(1, autoScale));
   canvas.width = Math.max(1, Math.floor(vw * renderScale));
   canvas.height = Math.max(1, Math.floor(vh * renderScale));
 };
@@ -235,6 +228,7 @@ updateLanguageToggleUi();
 updateDocumentTitle();
 updateMainPageTooltip();
 const sprites = getAllSprites();
+const introArtwork = getSpriteById(INTRO_SPRITE_ID);
 
 const applyViewportSpriteAdjustments = () => {
   const isPortrait = window.innerWidth / window.innerHeight < 1;
@@ -250,7 +244,7 @@ const applyViewportSpriteAdjustments = () => {
     }
 
     if (isPortrait) {
-      s.size = Math.max(0.05, s._baseSize - 0.3);
+      s.size = Math.max(0.05, s._baseSize * MOBILE_ENTITY_SCALE);
       s.childDistanceScale = 0.72;
     } else {
       s.size = s._baseSize;
@@ -272,7 +266,7 @@ const applyViewportSpriteAdjustments = () => {
       }
 
       if (isPortrait) {
-        c.size = Math.max(0.05, c._baseSize - 0.1);
+        c.size = Math.max(0.05, c._baseSize * MOBILE_ENTITY_SCALE);
         if (typeof c._baseYOffset === 'number') c.yOffset = c._baseYOffset * 1.5;
         else if (!c._baseHasYOffset) delete c.yOffset;
 
@@ -360,7 +354,12 @@ const removeDetailsWindow = (animate = true) => {
 };
 
 const showDetailsHud = artwork => {
-  const longDescription = getLocalizedText(artwork, 'long_description') || getLocalizedText(artwork, 'description');
+  const useMobileIntroDescription = artwork?.id === INTRO_SPRITE_ID && isIdleArrowsMobileContext();
+  const longDescription = (
+    useMobileIntroDescription
+      ? getLocalizedText(artwork, 'm_long_description')
+      : getLocalizedText(artwork, 'long_description')
+  ) || getLocalizedText(artwork, 'long_description') || getLocalizedText(artwork, 'description');
   if (!longDescription) return;
   removeDetailsWindow(false);
   const detailsTextHtml = formatDetailsWindowText(artwork, longDescription);
@@ -371,6 +370,11 @@ const showDetailsHud = artwork => {
 
 const handleArtworkInteraction = () => {
   if (!currentArtwork?.id) return;
+
+  if (currentArtwork.id !== INTRO_SPRITE_ID) {
+    clickPromptDisabled = true;
+    clickPrompt.classList.remove('visible');
+  }
 
   if (hud.dataset.details === '1') {
     clearChildSprites(currentArtwork.id);
@@ -406,26 +410,16 @@ const registerPointerInteraction = () => {
     clickPromptTargetId = currentArtwork.id;
     clickPromptStartedAt = performance.now();
   }
-  if (clickPrompt.classList.contains('visible')) {
-    clickPromptDisabled = true;
-    clickPrompt.classList.remove('visible');
-  }
+  if (clickPrompt.classList.contains('visible')) clickPrompt.classList.remove('visible');
 };
 
 const updateIdleArrows = () => {
-  if (introIdleArrowsWithMessage) {
-    idleArrows.style.display = 'block';
-    idleArrows.classList.add('visible');
-    return;
-  }
-
-  idleArrows.style.display = '';
-  idleArrows.classList.remove('intro-sync-fade');
   idleArrows.classList.remove('visible');
 };
 
 const updateClickPrompt = (now, hasNonIntroProximity) => {
-  if (clickPromptDisabled || !hasNonIntroProximity) {
+  const promptAlreadySpent = clickPromptShownOnce && !clickPrompt.classList.contains('visible');
+  if (clickPromptDisabled || promptAlreadySpent || !hasNonIntroProximity) {
     clickPromptTargetId = null;
     clickPromptStartedAt = 0;
     clickPrompt.classList.remove('visible');
@@ -453,6 +447,7 @@ const updateClickPrompt = (now, hasNonIntroProximity) => {
     return;
   }
 
+  if (!clickPromptShownOnce) clickPromptShownOnce = true;
   clickPrompt.classList.add('visible');
 };
 
@@ -559,8 +554,11 @@ const update = () => {
   const p = player;
   const rotLeft = keys['a'] || keys['arrowleft'] || touch.rotateLeft;
   const rotRight = keys['d'] || keys['arrowright'] || touch.rotateRight;
-  const moveForward = keys['w'] || keys['arrowup'] || touch.forward;
+  const introAutoMoving = introAutoMoveRemaining > 0;
+  const moveForward = keys['w'] || keys['arrowup'] || touch.forward || introAutoMoving;
   const moveBackward = keys['s'] || keys['arrowdown'] || touch.backward;
+  const beforeMoveX = p.x;
+  const beforeMoveY = p.y;
   
   if (rotLeft) p.rotVelocity = Math.max(p.rotVelocity - p.rotAccel, -p.maxRotVelocity);
   else if (rotRight) p.rotVelocity = Math.min(p.rotVelocity + p.rotAccel, p.maxRotVelocity);
@@ -577,9 +575,29 @@ const update = () => {
   
   if (!isWall(nextX, p.y)) p.x = nextX;
   if (!isWall(p.x, nextY)) p.y = nextY;
+
+  if (introAutoMoving) {
+    const movedDistance = Math.hypot(p.x - beforeMoveX, p.y - beforeMoveY);
+    if (movedDistance <= 0.0001) {
+      introAutoMoveRemaining = 0;
+    } else {
+      introAutoMoveRemaining = Math.max(0, introAutoMoveRemaining - movedDistance);
+    }
+  }
   
   const proximityRadius = 1;
   checkProximity(p.x, p.y, proximityRadius, cosAngle, sinAngle);
+
+  const introFallbackReady = introWindowPlayedOnSpawn && !introWindowRunning && !introAutoMoving;
+  const hasMovementInput = rotLeft || rotRight || moveForward || moveBackward;
+  const isIdleMovement = !hasMovementInput
+    && Math.abs(p.moveVelocity) <= IDLE_VELOCITY_EPSILON
+    && Math.abs(p.rotVelocity) <= IDLE_VELOCITY_EPSILON;
+
+  if (introFallbackReady && !currentArtwork?.id && isIdleMovement && introArtwork) {
+    currentArtwork = introArtwork;
+  }
+
   ensureIntroTextWindowState();
   const hasNonIntroProximity = Boolean(currentArtwork?.id && currentArtwork.id !== INTRO_SPRITE_ID);
   const frameNow = performance.now();
@@ -716,4 +734,6 @@ for (const s of sprites) {
 }
 Promise.allSettled(
   [..._allAssetPaths].map(src => { const img = new Image(); img.src = src; return img.decode(); })
-).then(() => update());
+);
+
+update();
