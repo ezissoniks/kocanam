@@ -29,6 +29,8 @@ const INTRO_TEXT_WINDOW_GAP_MS = 30_000;
 const INTRO_TEXT_WINDOW_BG_FADE_MS = 450;
 const NAVIGATION_FADE_MS = 450;
 const INTRO_PROXIMITY_SCALE = 0.7;
+const TOUCH_TAP_MAX_MOVE_PX = 12;
+const TOUCH_TAP_MAX_DURATION_MS = 300;
 let [currentArtwork, previousArtwork] = [null, null];
 let [typewriterIndex, typewriterText, typewriterTimeout] = [0, '', null];
 let proximityTimeout = null;
@@ -49,6 +51,7 @@ let introIdleArrowsWithMessage = false;
 let clickPromptDisabled = false;
 let clickPromptTargetId = null;
 let clickPromptStartedAt = 0;
+const touchTapCandidates = new Map();
 
 const languageButton = document.createElement('button');
 languageButton.id = 'lang-toggle';
@@ -625,11 +628,61 @@ canvas.addEventListener('pointerdown', evt => {
 });
 
 canvas.addEventListener('touchstart', evt => {
+  const now = performance.now();
+  const isSingleTouchStart = evt.touches.length === 1;
+
   for (const changedTouch of evt.changedTouches) {
-    if (!isDeadZoneTouch(changedTouch.clientX, changedTouch.clientY)) continue;
+    touchTapCandidates.set(changedTouch.identifier, {
+      startX: changedTouch.clientX,
+      startY: changedTouch.clientY,
+      startTime: now,
+      moved: false,
+      startedInDeadZone: isDeadZoneTouch(changedTouch.clientX, changedTouch.clientY),
+      singleTouchOnly: isSingleTouchStart
+    });
+  }
+}, { passive: true });
+
+canvas.addEventListener('touchmove', evt => {
+  const isSingleTouch = evt.touches.length === 1;
+
+  for (const movedTouch of evt.changedTouches) {
+    const tapCandidate = touchTapCandidates.get(movedTouch.identifier);
+    if (!tapCandidate) continue;
+
+    const deltaX = movedTouch.clientX - tapCandidate.startX;
+    const deltaY = movedTouch.clientY - tapCandidate.startY;
+    const movedDistance = Math.hypot(deltaX, deltaY);
+
+    if (movedDistance > TOUCH_TAP_MAX_MOVE_PX) tapCandidate.moved = true;
+    if (!isSingleTouch) tapCandidate.singleTouchOnly = false;
+  }
+}, { passive: true });
+
+canvas.addEventListener('touchend', evt => {
+  const now = performance.now();
+
+  for (const endedTouch of evt.changedTouches) {
+    const tapCandidate = touchTapCandidates.get(endedTouch.identifier);
+    touchTapCandidates.delete(endedTouch.identifier);
+    if (!tapCandidate) continue;
+
+    const touchDuration = now - tapCandidate.startTime;
+    const isTap = tapCandidate.startedInDeadZone
+      && tapCandidate.singleTouchOnly
+      && !tapCandidate.moved
+      && touchDuration <= TOUCH_TAP_MAX_DURATION_MS;
+
+    if (!isTap) continue;
     registerPointerInteraction();
     handleArtworkInteraction();
     break;
+  }
+}, { passive: true });
+
+canvas.addEventListener('touchcancel', evt => {
+  for (const cancelledTouch of evt.changedTouches) {
+    touchTapCandidates.delete(cancelledTouch.identifier);
   }
 }, { passive: true });
 
