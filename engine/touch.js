@@ -29,6 +29,7 @@ let pinchStartDistance = null;
 let pinchLastDistance = null;
 let pinchLastTime = 0;
 let pinchVelocity = 0;
+let pinchLockActive = false;
 const rotateMomentum = { dir: 0, until: 0 };
 const moveMomentum = { dir: 0, until: 0 };
 let gestureTickScheduled = false;
@@ -139,6 +140,10 @@ const updateGestureState = () => {
   }
 
   if (points.length >= 2) {
+    pinchLockActive = true;
+    rotateMomentum.dir = 0;
+    rotateMomentum.until = 0;
+
     const [a, b] = points;
     const dx = b.x - a.x;
     const dy = b.y - a.y;
@@ -172,6 +177,12 @@ const updateGestureState = () => {
   pinchLastDistance = null;
   pinchLastTime = 0;
   pinchVelocity = 0;
+
+  if (pinchLockActive) {
+    applyMomentumState(now);
+    return;
+  }
+
   const [single] = points;
   const dx = single.x - single.startX;
   const dy = single.y - single.startY;
@@ -242,6 +253,7 @@ document.addEventListener('touchstart', e => {
   clearMomentum();
   addOrUpdateTouches(e.changedTouches);
   if (activeTouches.size >= 2 && pinchStartDistance === null) {
+    pinchLockActive = true;
     const [a, b] = [...activeTouches.values()];
     pinchStartDistance = Math.hypot(b.x - a.x, b.y - a.y);
     pinchLastDistance = pinchStartDistance;
@@ -274,6 +286,7 @@ document.addEventListener('touchend', e => {
   removeTouches(e.changedTouches);
 
   if (activeTouches.size === 0) {
+    pinchLockActive = false;
     pinchStartDistance = null;
     pinchLastDistance = null;
     pinchLastTime = 0;
@@ -296,6 +309,7 @@ document.addEventListener('touchend', e => {
 
 document.addEventListener('touchcancel', e => {
   removeTouches(e.changedTouches ?? []);
+  if (activeTouches.size === 0) pinchLockActive = false;
   pinchStartDistance = null;
   pinchLastDistance = null;
   pinchLastTime = 0;
