@@ -11,7 +11,8 @@ const COS_HALF_FOV = Math.cos(FOV / 2);
 const MAX_RENDER_PIXELS = 1_800_000;
 const MIN_RENDER_SCALE = 0.5;
 const MOBILE_MIN_RENDER_SCALE = 0.72;
-const MOBILE_RENDER_PIXEL_RATIO_CAP = 1.5;
+const MOBILE_RENDER_PIXEL_RATIO_CAP = 1.15;
+const MOBILE_DPR_BOOST_MAX_VIEWPORT_PIXELS = 550_000;
 const INTRO_SPRITE_ID = 'A';
 const PORTFOLIO_TITLES = {
   lv: 'Kočāns - dizaina portfolio',
@@ -222,7 +223,8 @@ const setCanvasSize = () => {
   const autoScale = pixelCount > MAX_RENDER_PIXELS ? Math.sqrt(MAX_RENDER_PIXELS / pixelCount) : 1;
   const minRenderScale = isMobileViewport ? MOBILE_MIN_RENDER_SCALE : MIN_RENDER_SCALE;
   const renderScale = Math.max(minRenderScale, Math.min(1, autoScale));
-  const devicePixelRatioScale = isMobileViewport
+  const shouldUseMobileDprBoost = isMobileViewport && pixelCount <= MOBILE_DPR_BOOST_MAX_VIEWPORT_PIXELS;
+  const devicePixelRatioScale = shouldUseMobileDprBoost
     ? Math.min(window.devicePixelRatio || 1, MOBILE_RENDER_PIXEL_RATIO_CAP)
     : 1;
   canvas.width = Math.max(1, Math.floor(vw * renderScale * devicePixelRatioScale));

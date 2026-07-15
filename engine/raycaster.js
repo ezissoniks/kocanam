@@ -145,8 +145,6 @@ function getSpriteOpacity(sprite, playerX, playerY, now) {
 }
 
 function renderSprites(ctx, width, height, playerX, playerY, playerAngle, now) {
-  ctx.imageSmoothingEnabled = true;
-  ctx.imageSmoothingQuality = 'high';
   const frameTick = Math.floor(now / 125), maxDepthSq = MAX_DEPTH * MAX_DEPTH;
   const cosA = Math.cos(playerAngle), sinA = Math.sin(playerAngle);
   let poolIdx = 0;
