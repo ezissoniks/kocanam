@@ -14,9 +14,8 @@ const SWIPE_TURN_THRESHOLD_PX = 18;
 const SWIPE_HORIZONTAL_DOMINANCE = 0.6;
 const PINCH_OUT_THRESHOLD_PX = 18;
 const SWIPE_MOMENTUM_MIN_VELOCITY = 0.45; // px/ms
-const PINCH_MOMENTUM_MIN_VELOCITY = 0.35; // px/ms
 const MOMENTUM_MIN_MS = 90;
-const MOMENTUM_MAX_MS = 280;
+const MOMENTUM_MAX_MS = 220;
 
 let viewportWidth = 0;
 let viewportHeight = 0;
@@ -26,12 +25,8 @@ let leftTurnLimit = 0;
 let rightTurnStart = 0;
 const activeTouches = new Map();
 let pinchStartDistance = null;
-let pinchLastDistance = null;
-let pinchLastTime = 0;
-let pinchVelocity = 0;
 let pinchLockActive = false;
 const rotateMomentum = { dir: 0, until: 0 };
-const moveMomentum = { dir: 0, until: 0 };
 let gestureTickScheduled = false;
 
 const resetTouchMotion = () => {
@@ -44,12 +39,10 @@ const resetTouchMotion = () => {
 const clearMomentum = () => {
   rotateMomentum.dir = 0;
   rotateMomentum.until = 0;
-  moveMomentum.dir = 0;
-  moveMomentum.until = 0;
 };
 
 const getMomentumDuration = velocity => {
-  const scaled = MOMENTUM_MIN_MS + Math.min(1.2, Math.abs(velocity)) * 160;
+  const scaled = MOMENTUM_MIN_MS + Math.min(1.2, Math.abs(velocity)) * 120;
   return Math.max(MOMENTUM_MIN_MS, Math.min(MOMENTUM_MAX_MS, scaled));
 };
 
@@ -63,15 +56,7 @@ const applySwipeMomentum = (vx, vy, now) => {
   rotateMomentum.until = now + getMomentumDuration(absVx);
 };
 
-const applyPinchMomentum = (velocity, now) => {
-  const absVelocity = Math.abs(velocity);
-  if (absVelocity < PINCH_MOMENTUM_MIN_VELOCITY) return;
-
-  moveMomentum.dir = velocity > 0 ? 1 : -1;
-  moveMomentum.until = now + getMomentumDuration(absVelocity);
-};
-
-const hasActiveMomentum = now => rotateMomentum.until > now || moveMomentum.until > now;
+const hasActiveMomentum = now => rotateMomentum.until > now;
 
 const needsGestureTick = now => activeTouches.size > 0 || hasActiveMomentum(now);
 
@@ -121,11 +106,6 @@ const applyMomentumState = now => {
     touch.rotateLeft = touch.rotateLeft || rotateMomentum.dir < 0;
     touch.rotateRight = touch.rotateRight || rotateMomentum.dir > 0;
   }
-
-  if (moveMomentum.until > now) {
-    touch.forward = touch.forward || moveMomentum.dir > 0;
-    touch.backward = touch.backward || moveMomentum.dir < 0;
-  }
 };
 
 const updateGestureState = () => {
@@ -149,22 +129,7 @@ const updateGestureState = () => {
     const dy = b.y - a.y;
     const distance = Math.hypot(dx, dy);
 
-    if (pinchStartDistance === null) {
-      pinchStartDistance = distance;
-      pinchLastDistance = distance;
-      pinchLastTime = now;
-      pinchVelocity = 0;
-    }
-
-    if (pinchLastDistance !== null && pinchLastTime > 0) {
-      const dt = now - pinchLastTime;
-      if (dt > 0) {
-        const instantVelocity = (distance - pinchLastDistance) / dt;
-        pinchVelocity = pinchVelocity * 0.5 + instantVelocity * 0.5;
-      }
-    }
-    pinchLastDistance = distance;
-    pinchLastTime = now;
+    if (pinchStartDistance === null) pinchStartDistance = distance;
 
     const pinchDelta = distance - pinchStartDistance;
     touch.forward = pinchDelta > PINCH_OUT_THRESHOLD_PX;
@@ -174,9 +139,6 @@ const updateGestureState = () => {
   }
 
   pinchStartDistance = null;
-  pinchLastDistance = null;
-  pinchLastTime = 0;
-  pinchVelocity = 0;
 
   if (pinchLockActive) {
     applyMomentumState(now);
@@ -256,9 +218,6 @@ document.addEventListener('touchstart', e => {
     pinchLockActive = true;
     const [a, b] = [...activeTouches.values()];
     pinchStartDistance = Math.hypot(b.x - a.x, b.y - a.y);
-    pinchLastDistance = pinchStartDistance;
-    pinchLastTime = performance.now();
-    pinchVelocity = 0;
   }
   updateGestureState();
   scheduleGestureTick();
@@ -274,8 +233,7 @@ document.addEventListener('touchend', e => {
   const now = performance.now();
   const hadPinch = activeTouches.size >= 2;
 
-  if (hadPinch) applyPinchMomentum(pinchVelocity, now);
-  else {
+  if (!hadPinch) {
     for (const t of e.changedTouches) {
       const ended = activeTouches.get(t.identifier);
       if (!ended) continue;
@@ -288,18 +246,12 @@ document.addEventListener('touchend', e => {
   if (activeTouches.size === 0) {
     pinchLockActive = false;
     pinchStartDistance = null;
-    pinchLastDistance = null;
-    pinchLastTime = 0;
-    pinchVelocity = 0;
     updateGestureState();
     return;
   }
 
   if (hadPinch && activeTouches.size === 1) {
     pinchStartDistance = null;
-    pinchLastDistance = null;
-    pinchLastTime = 0;
-    pinchVelocity = 0;
     rebaseSingleTouchStart();
   }
 
@@ -311,9 +263,6 @@ document.addEventListener('touchcancel', e => {
   removeTouches(e.changedTouches ?? []);
   if (activeTouches.size === 0) pinchLockActive = false;
   pinchStartDistance = null;
-  pinchLastDistance = null;
-  pinchLastTime = 0;
-  pinchVelocity = 0;
   clearMomentum();
   if (activeTouches.size === 0) {
     resetTouchMotion();
