@@ -211,8 +211,11 @@ const ensureIntroTextWindowState = () => {
 };
 
 const setCanvasSize = () => {
-  const vw = window.innerWidth;
-  const vh = window.innerHeight;
+  const rect = canvas.getBoundingClientRect();
+  const viewportWidth = window.visualViewport?.width ?? window.innerWidth;
+  const viewportHeight = window.visualViewport?.height ?? window.innerHeight;
+  const vw = Math.max(1, Math.round(rect.width || viewportWidth));
+  const vh = Math.max(1, Math.round(rect.height || viewportHeight));
   const pixelCount = vw * vh;
   const isMobileViewport = touch.isMobile || window.matchMedia?.('(pointer: coarse)').matches;
   const autoScale = pixelCount > MAX_RENDER_PIXELS ? Math.sqrt(MAX_RENDER_PIXELS / pixelCount) : 1;
