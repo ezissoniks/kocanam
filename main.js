@@ -9,10 +9,11 @@ const [canvas, hud, gameLogo] = ['gameCanvas', 'hud', 'game-logo']
 const FOV = Math.PI / 3;
 const COS_HALF_FOV = Math.cos(FOV / 2);
 const MAX_RENDER_PIXELS = 1_800_000;
+const MOBILE_MAX_RENDER_PIXELS = 4_200_000;
 const MIN_RENDER_SCALE = 0.5;
-const MOBILE_MIN_RENDER_SCALE = 0.72;
-const MOBILE_RENDER_PIXEL_RATIO_CAP = 1.15;
-const MOBILE_DPR_BOOST_MAX_VIEWPORT_PIXELS = 550_000;
+const MOBILE_MIN_RENDER_SCALE = 1;
+const MOBILE_RENDER_PIXEL_RATIO_CAP = 3;
+const MOBILE_DPR_BOOST_MAX_VIEWPORT_PIXELS = 2_000_000;
 const INTRO_SPRITE_ID = 'A';
 const PORTFOLIO_TITLES = {
   lv: 'Kočāns - dizaina portfolio',
@@ -34,6 +35,7 @@ const INTRO_AUTO_MOVE_DISTANCE = 1;
 const NAVIGATION_FADE_MS = 450;
 const INTRO_PROXIMITY_SCALE = 0.7;
 const MOBILE_ENTITY_SCALE = 0.7;
+const MOBILE_DPR_MIN = 2;
 const TOUCH_TAP_MAX_MOVE_PX = 12;
 const TOUCH_TAP_MAX_DURATION_MS = 300;
 const IDLE_VELOCITY_EPSILON = 0.001;
@@ -220,13 +222,19 @@ const setCanvasSize = () => {
   const vh = Math.max(1, Math.round(rect.height || viewportHeight));
   const pixelCount = vw * vh;
   const isMobileViewport = touch.isMobile || window.matchMedia?.('(pointer: coarse)').matches;
-  const autoScale = pixelCount > MAX_RENDER_PIXELS ? Math.sqrt(MAX_RENDER_PIXELS / pixelCount) : 1;
+  const maxRenderPixels = isMobileViewport ? MOBILE_MAX_RENDER_PIXELS : MAX_RENDER_PIXELS;
+  const autoScale = pixelCount > maxRenderPixels ? Math.sqrt(maxRenderPixels / pixelCount) : 1;
   const minRenderScale = isMobileViewport ? MOBILE_MIN_RENDER_SCALE : MIN_RENDER_SCALE;
   const renderScale = Math.max(minRenderScale, Math.min(1, autoScale));
   const shouldUseMobileDprBoost = isMobileViewport && pixelCount <= MOBILE_DPR_BOOST_MAX_VIEWPORT_PIXELS;
-  const devicePixelRatioScale = shouldUseMobileDprBoost
-    ? Math.min(window.devicePixelRatio || 1, MOBILE_RENDER_PIXEL_RATIO_CAP)
+  const requestedDevicePixelRatioScale = shouldUseMobileDprBoost
+    ? Math.min(
+      Math.max(window.devicePixelRatio || 1, MOBILE_DPR_MIN),
+      MOBILE_RENDER_PIXEL_RATIO_CAP
+    )
     : 1;
+  const dprBudgetCap = Math.sqrt(maxRenderPixels / Math.max(1, pixelCount * renderScale * renderScale));
+  const devicePixelRatioScale = Math.max(1, Math.min(requestedDevicePixelRatioScale, dprBudgetCap));
   canvas.width = Math.max(1, Math.floor(vw * renderScale * devicePixelRatioScale));
   canvas.height = Math.max(1, Math.floor(vh * renderScale * devicePixelRatioScale));
 };

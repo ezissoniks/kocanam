@@ -201,7 +201,33 @@ const BASE_SPRITES = [
 
 ].map(moveSpriteAwayFromPlayer);
 
-export const SPRITES = BASE_SPRITES.slice();
+const MIRROR_ANCHOR_Y = PLAYER_START_Y;
+const MIRROR_CLOSE_STEPS = 4;
+const MIN_MIRROR_BEHIND_DISTANCE = 0.2;
+
+const createMirroredSprite = sprite => {
+  // Keep mirrored copies behind the player but pull them 4 map units closer.
+  // Example: original distance 7 -> mirrored distance 3 from anchor line.
+  // Very near sprites stay slightly behind to avoid crossing in front of player.
+  const mirroredDistance = Math.max(
+    MIN_MIRROR_BEHIND_DISTANCE,
+    Math.abs(sprite.y - MIRROR_ANCHOR_Y) - MIRROR_CLOSE_STEPS
+  );
+
+  return {
+    ...sprite,
+    id: `${sprite.id}__mirror`,
+    y: MIRROR_ANCHOR_Y - mirroredDistance,
+    childSprites: Array.isArray(sprite.childSprites)
+      ? sprite.childSprites.map(child => ({ ...child }))
+      : sprite.childSprites,
+    _mirrored: true
+  };
+};
+
+const MIRRORED_SPRITES = BASE_SPRITES.map(createMirroredSprite);
+
+export const SPRITES = [...BASE_SPRITES, ...MIRRORED_SPRITES];
 
 export const getSpriteById = id => SPRITES.find(s => s.id === id);
 export const getAllSprites = () => SPRITES;
