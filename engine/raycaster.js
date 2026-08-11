@@ -8,6 +8,8 @@ const imageCache = new Map(), imageDimensions = new Map(), ctxCache = new WeakMa
 const animatedCanvases = new Map(); // path -> {img, canvas, ctx}
 const sprites = getAllSprites(), spriteDistances = [], _entryPool = [];
 const fallbackBgRgb = [221, 217, 215];
+const preloadQueue = [];
+const PRELOAD_BATCH_SIZE = 6;
 let lastBgHex = null, lastBgRgb = fallbackBgRgb;
 const bgState = { current: new Float32Array([255,245,235]), target: new Float32Array([255,245,235]), from: new Float32Array([255,245,235]), start: 0, duration: 450 };
 
@@ -38,9 +40,25 @@ function updateBgColor(targetHex, now) {
   return _bgCachedStr = `rgb(${r},${g},${b})`;
 }
 
+function queueImagePreload(path) {
+  if (!path || imageCache.has(path) || preloadQueue.includes(path)) return;
+  preloadQueue.push(path);
+}
+
+function flushPreloadQueue() {
+  for (let i = 0; i < PRELOAD_BATCH_SIZE && preloadQueue.length > 0; i++) {
+    const path = preloadQueue.shift();
+    if (path) loadImage(path);
+  }
+  if (preloadQueue.length > 0) {
+    requestAnimationFrame(flushPreloadQueue);
+  }
+}
+
 function loadImage(path) {
   if (imageCache.has(path)) return imageCache.get(path);
   const img = new Image();
+  img.decoding = 'async';
   img.src = path;
   img.onload = () => {
     imageDimensions.set(path, {
@@ -91,16 +109,17 @@ function getCanvasContext(canvas) {
 for (const sprite of sprites) {
   if (Array.isArray(sprite.frames) && !sprite._framesPreloaded) {
     sprite._framesPreloaded = true;
-    for (const f of sprite.frames) if (typeof f === 'string' && f.includes('.')) loadImage(f);
+    for (const f of sprite.frames) if (typeof f === 'string' && f.includes('.')) queueImagePreload(f);
   }
-  if (sprite.texture?.includes('.')) loadImage(sprite.texture);
+  if (sprite.texture?.includes('.')) queueImagePreload(sprite.texture);
   if (Array.isArray(sprite.childSprites)) {
     for (const t of sprite.childSprites) {
-      if (Array.isArray(t.frames)) for (const f of t.frames) if (typeof f === 'string' && f.includes('.')) loadImage(f);
-      if (t.texture?.includes('.')) loadImage(t.texture);
+      if (Array.isArray(t.frames)) for (const f of t.frames) if (typeof f === 'string' && f.includes('.')) queueImagePreload(f);
+      if (t.texture?.includes('.')) queueImagePreload(t.texture);
     }
   }
 }
+requestAnimationFrame(flushPreloadQueue);
 
 function getSpriteAspectRatio(sprite, pref, fall) {
   const ar = p => p && imageDimensions.get(p)?.aspectRatio;

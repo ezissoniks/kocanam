@@ -937,18 +937,4 @@ gameLogo.addEventListener('pointerdown', evt => {
   }, NAVIGATION_FADE_MS);
 });
 
-// Collect every image path from sprites and child templates
-const _allAssetPaths = new Set();
-for (const s of sprites) {
-  if (s.texture?.includes('.')) _allAssetPaths.add(s.texture);
-  if (Array.isArray(s.frames)) for (const f of s.frames) if (f?.includes('.')) _allAssetPaths.add(f);
-  if (Array.isArray(s.childSprites)) for (const c of s.childSprites) {
-    if (c.texture?.includes('.')) _allAssetPaths.add(c.texture);
-    if (Array.isArray(c.frames)) for (const f of c.frames) if (f?.includes('.')) _allAssetPaths.add(f);
-  }
-}
-Promise.allSettled(
-  [..._allAssetPaths].map(src => { const img = new Image(); img.src = src; return img.decode(); })
-);
-
 update();
