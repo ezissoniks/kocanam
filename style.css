@@ -20,8 +20,7 @@ html {
 
 body {
     width: 100vw;
-    min-height: 100vh;
-    min-height: 100dvh;
+    height: var(--app-height, 100vh);
     background: var(--bg-color);
     overflow: hidden;
     overscroll-behavior: none;

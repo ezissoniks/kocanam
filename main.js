@@ -80,6 +80,11 @@ let clickPromptTargetId = null;
 let clickPromptStartedAt = 0;
 const touchTapCandidates = new Map();
 
+const setAppViewportHeight = () => {
+  const viewportHeight = window.visualViewport?.height ?? window.innerHeight;
+  document.documentElement.style.setProperty('--app-height', `${Math.max(1, Math.round(viewportHeight))}px`);
+};
+
 const languageButton = document.createElement('button');
 languageButton.id = 'lang-toggle';
 languageButton.type = 'button';
@@ -358,9 +363,16 @@ const scheduleCanvasSizeSync = () => {
   });
 };
 
-['load', 'resize', 'orientationchange'].forEach(e => window.addEventListener(e, scheduleCanvasSizeSync));
+const syncViewportMetrics = () => {
+  setAppViewportHeight();
+  scheduleCanvasSizeSync();
+};
+
+['load', 'resize', 'orientationchange'].forEach(e => window.addEventListener(e, syncViewportMetrics));
 window.visualViewport?.addEventListener('resize', scheduleCanvasSizeSync);
+window.visualViewport?.addEventListener('resize', setAppViewportHeight);
 window.addEventListener('load', () => document.body.classList.add('loaded'));
+setAppViewportHeight();
 setCanvasSize();
 renderFrame(canvas, player.x, player.y, player.angle);
 updateLanguageToggleUi();
