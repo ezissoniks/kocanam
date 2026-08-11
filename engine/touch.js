@@ -13,9 +13,6 @@ const LANDSCAPE_SIDE_TURN_RATIO = 0.2;
 const SWIPE_TURN_THRESHOLD_PX = 18;
 const SWIPE_HORIZONTAL_DOMINANCE = 0.6;
 const PINCH_OUT_THRESHOLD_PX = 18;
-const SWIPE_MOMENTUM_MIN_VELOCITY = 0.45; // px/ms
-const MOMENTUM_MIN_MS = 90;
-const MOMENTUM_MAX_MS = 220;
 
 let viewportWidth = 0;
 let viewportHeight = 0;
@@ -26,7 +23,6 @@ let rightTurnStart = 0;
 const activeTouches = new Map();
 let pinchStartDistance = null;
 let pinchLockActive = false;
-const rotateMomentum = { dir: 0, until: 0 };
 let gestureTickScheduled = false;
 
 const resetTouchMotion = () => {
@@ -37,35 +33,16 @@ const resetTouchMotion = () => {
 };
 
 const clearMomentum = () => {
-  rotateMomentum.dir = 0;
-  rotateMomentum.until = 0;
+  // Swipe momentum disabled: stopping touch input should stop turning immediately.
 };
 
-const getMomentumDuration = velocity => {
-  const scaled = MOMENTUM_MIN_MS + Math.min(1.2, Math.abs(velocity)) * 120;
-  return Math.max(MOMENTUM_MIN_MS, Math.min(MOMENTUM_MAX_MS, scaled));
-};
-
-const applySwipeMomentum = (vx, vy, now) => {
-  const absVx = Math.abs(vx);
-  const absVy = Math.abs(vy);
-  if (absVx < SWIPE_MOMENTUM_MIN_VELOCITY) return;
-  if (absVx < absVy * SWIPE_HORIZONTAL_DOMINANCE) return;
-
-  rotateMomentum.dir = vx > 0 ? 1 : -1;
-  rotateMomentum.until = now + getMomentumDuration(absVx);
-};
-
-const hasActiveMomentum = now => rotateMomentum.until > now;
-
-const needsGestureTick = now => activeTouches.size > 0 || hasActiveMomentum(now);
+const needsGestureTick = () => activeTouches.size > 0;
 
 const gestureTick = () => {
   gestureTickScheduled = false;
   updateGestureState();
 
-  const now = performance.now();
-  if (needsGestureTick(now)) scheduleGestureTick();
+  if (needsGestureTick()) scheduleGestureTick();
 };
 
 const scheduleGestureTick = () => {
@@ -101,28 +78,15 @@ const inDeadZone = (x, y) => {
   return inHorizontalDeadZone && inVerticalDeadZone;
 };
 
-const applyMomentumState = now => {
-  if (rotateMomentum.until > now) {
-    touch.rotateLeft = touch.rotateLeft || rotateMomentum.dir < 0;
-    touch.rotateRight = touch.rotateRight || rotateMomentum.dir > 0;
-  }
-};
-
 const updateGestureState = () => {
-  const now = performance.now();
   resetTouchMotion();
   touch.backward = false;
 
   const points = [...activeTouches.values()];
-  if (points.length === 0) {
-    applyMomentumState(now);
-    return;
-  }
+  if (points.length === 0) return;
 
   if (points.length >= 2) {
     pinchLockActive = true;
-    rotateMomentum.dir = 0;
-    rotateMomentum.until = 0;
 
     const [a, b] = points;
     const dx = b.x - a.x;
@@ -134,16 +98,12 @@ const updateGestureState = () => {
     const pinchDelta = distance - pinchStartDistance;
     touch.forward = pinchDelta > PINCH_OUT_THRESHOLD_PX;
     touch.backward = pinchDelta < -PINCH_OUT_THRESHOLD_PX;
-    applyMomentumState(now);
     return;
   }
 
   pinchStartDistance = null;
 
-  if (pinchLockActive) {
-    applyMomentumState(now);
-    return;
-  }
+  if (pinchLockActive) return;
 
   const [single] = points;
   const dx = single.x - single.startX;
@@ -151,18 +111,11 @@ const updateGestureState = () => {
   const absDx = Math.abs(dx);
   const absDy = Math.abs(dy);
 
-  if (absDx < SWIPE_TURN_THRESHOLD_PX) {
-    applyMomentumState(now);
-    return;
-  }
-  if (absDx < absDy * SWIPE_HORIZONTAL_DOMINANCE) {
-    applyMomentumState(now);
-    return;
-  }
+  if (absDx < SWIPE_TURN_THRESHOLD_PX) return;
+  if (absDx < absDy * SWIPE_HORIZONTAL_DOMINANCE) return;
 
   touch.rotateLeft = dx < 0;
   touch.rotateRight = dx > 0;
-  applyMomentumState(now);
 };
 
 const addOrUpdateTouches = changedTouches => {
@@ -230,16 +183,7 @@ document.addEventListener('touchmove', e => {
 }, { passive: true });
 
 document.addEventListener('touchend', e => {
-  const now = performance.now();
   const hadPinch = activeTouches.size >= 2;
-
-  if (!hadPinch) {
-    for (const t of e.changedTouches) {
-      const ended = activeTouches.get(t.identifier);
-      if (!ended) continue;
-      applySwipeMomentum(ended.vx, ended.vy, now);
-    }
-  }
 
   removeTouches(e.changedTouches);
 
@@ -256,7 +200,7 @@ document.addEventListener('touchend', e => {
   }
 
   updateGestureState();
-  if (needsGestureTick(now)) scheduleGestureTick();
+  if (needsGestureTick()) scheduleGestureTick();
 }, { passive: true });
 
 document.addEventListener('touchcancel', e => {
@@ -270,8 +214,7 @@ document.addEventListener('touchcancel', e => {
   }
   rebaseSingleTouchStart();
   updateGestureState();
-  const now = performance.now();
-  if (needsGestureTick(now)) scheduleGestureTick();
+  if (needsGestureTick()) scheduleGestureTick();
 }, { passive: true });
 
 ['load', 'resize', 'orientationchange'].forEach(eventName => window.addEventListener(eventName, updateTouchMetrics));
