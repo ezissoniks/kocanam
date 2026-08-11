@@ -3,6 +3,7 @@ import { getAllSprites } from "./sprites.js";
 const FOV = Math.PI/3, MAX_DEPTH = 20, BASE_SCREEN_WIDTH = 1920;
 const HALF_FOV = FOV / 2, INV_FOV = 1 / FOV, PROJECTION_SCALE = (1 / Math.tan(HALF_FOV)) / 2;
 const DEFAULT_THEME = { bg: '#FFF5EB', primary: '#3C2828' };
+const MOBILE_SPRITE_VERTICAL_OFFSET_RATIO = 0.12;
 const imageCache = new Map(), imageDimensions = new Map(), ctxCache = new WeakMap();
 const animatedCanvases = new Map(); // path -> {img, canvas, ctx}
 const sprites = getAllSprites(), spriteDistances = [], _entryPool = [];
@@ -106,6 +107,13 @@ function getSpriteAspectRatio(sprite, pref, fall) {
   return ar(pref) || ar(fall) || sprite.frames?.reduce((r, f) => r || ar(f), 0) || 1;
 }
 
+function isMobileSpriteViewport() {
+  const coarsePointer = window.matchMedia?.('(pointer: coarse)').matches;
+  const noHover = window.matchMedia?.('(hover: none)').matches;
+  const isPhoneLikeViewport = Math.min(window.innerWidth, window.innerHeight) <= 900;
+  return Boolean(coarsePointer && noHover && isPhoneLikeViewport);
+}
+
 export function renderFrame(canvas, playerX, playerY, playerAngle) {
   const ctx = getCanvasContext(canvas), width = canvas.width, height = canvas.height, now = performance.now();
   refreshAnimatedCanvases();
@@ -147,6 +155,7 @@ function getSpriteOpacity(sprite, playerX, playerY, now) {
 function renderSprites(ctx, width, height, playerX, playerY, playerAngle, now) {
   const frameTick = Math.floor(now / 125), maxDepthSq = MAX_DEPTH * MAX_DEPTH;
   const cosA = Math.cos(playerAngle), sinA = Math.sin(playerAngle);
+  const mobileSpriteYOffset = isMobileSpriteViewport() ? height * MOBILE_SPRITE_VERTICAL_OFFSET_RATIO : 0;
   let poolIdx = 0;
   spriteDistances.length = 0;
   for (let i = 0; i < sprites.length; i++) {
@@ -193,7 +202,7 @@ function renderSprites(ctx, width, height, playerX, playerY, playerAngle, now) {
     const spriteWidth = spriteHeight * getSpriteAspectRatio(sprite, texturePath, baseTexture);
     const zOffset = sprite.heightScale ?? 0;
     const projectedYOffset = (zOffset / correctedDistance) * PROJECTION_SCALE * height;
-    const spriteY = (height - spriteHeight) / 2 - projectedYOffset, spriteLeft = screenX - spriteWidth / 2;
+    const spriteY = (height - spriteHeight) / 2 - projectedYOffset + mobileSpriteYOffset, spriteLeft = screenX - spriteWidth / 2;
     if (spriteWidth < 1) continue;
 
     if (texturePath?.includes('.')) {

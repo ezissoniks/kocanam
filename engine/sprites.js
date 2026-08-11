@@ -30,10 +30,10 @@ const BASE_SPRITES = [
     size: 0.3,
     heightScale: 1.0,
     screenSize: true,
-    long_description: 'čau,\n\nEs esmu Kočāns Miķelis, Latvijas Mākslas akadēmijas grafikas dizaina students. Esiet sveicināti manā dizaina portfolio! Man patīk veidot afišas un ņemties ar tipografiku, bet esmu gatavs darīt visu apkārt dizainam! Vienmēr pievēršu īpašu uzmanību detaļām un ar dizainu mēģinu risināt problēmas.\n\nKusties ar 🡨🡩🡫🡪 un izbaudi!',
-    long_description_en: 'hi,\n\nI am Kočāns Miķelis (Mike), and I study graphic design at the Art Academy of Latvia. Welcome to my design portfolio! I enjoy creating posters and working with typography, but I am ready to work on anything around design. I always pay close attention to details and try to solve problems with design.\n\nMove with 🡨🡩🡫🡪 and enjoy!',
-    m_long_description: 'čau,\n\nEs esmu Kočāns Miķelis, Latvijas Mākslas akadēmijas grafikas dizaina students. Esiet sveicināti manā dizaina portfolio! Man patīk veidot afišas un ņemties ar tipografiku, bet esmu gatavs darīt visu apkārt dizainam! Vienmēr pievēršu īpašu uzmanību detaļām un ar dizainu mēģinu risināt problēmas.\n\nVelc ⮂, lai grieztos, un velc ⤢, lai kustētos!',
-    m_long_description_en: 'hi,\n\nI am Kočāns Miķelis (Mike), and I study graphic design at the Art Academy of Latvia. Welcome to my design portfolio! I enjoy creating posters and working with typography, but I am ready to work on anything around design. I always pay close attention to details and try to solve problems with design.\n\nSwipe ⮂ to rotate, and pinch ⤢ to move!',
+    long_description: 'čau,\n\nEs esmu Kočāns Miķelis, Latvijas Mākslas akadēmijas grafikas dizaina students. Esiet sveicināti manā dizaina portfolio! Man patīk veidot afišas un ņemties ar tipografiku, bet esmu gatavs darīt visu apkārt dizainam! Vienmēr pievēršu īpašu uzmanību detaļām un ar dizainu mēģinu risināt problēmas.',
+    long_description_en: 'hi,\n\nI am Kočāns Miķelis (Mike), and I study graphic design at the Art Academy of Latvia. Welcome to my design portfolio! I enjoy creating posters and working with typography, but I am ready to work on anything around design. I always pay close attention to details and try to solve problems with design.',
+    m_long_description: 'čau,\n\nEs esmu Kočāns Miķelis, Latvijas Mākslas akadēmijas grafikas dizaina students. Esiet sveicināti manā dizaina portfolio! Man patīk veidot afišas un ņemties ar tipografiku, bet esmu gatavs darīt visu apkārt dizainam! Vienmēr pievēršu īpašu uzmanību detaļām un ar dizainu mēģinu risināt problēmas.',
+    m_long_description_en: 'hi,\n\nI am Kočāns Miķelis (Mike), and I study graphic design at the Art Academy of Latvia. Welcome to my design portfolio! I enjoy creating posters and working with typography, but I am ready to work on anything around design. I always pay close attention to details and try to solve problems with design.',
   
   },
 
@@ -64,8 +64,8 @@ const BASE_SPRITES = [
 
   {
     id: 'C',
-    x: 3.5,
-    y: 5.5,
+    x: 4,
+    y: 1.5,
     texture: 'textures/disc (5).png',
     size: 0.5,
     childProximityRadius: 2.2,
@@ -157,8 +157,8 @@ const BASE_SPRITES = [
 
   {
     id: 'G',
-    x: 3.5,
-    y: 8,
+    x: 3,
+    y: 1.5,
     texture: 'textures/sphongiun.png',
     size: 0.5,
     childProximityRadius: 2.2,

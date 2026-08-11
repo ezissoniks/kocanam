@@ -30,6 +30,42 @@ body.loaded {
     opacity: 1;
 }
 
+#click-cursor-label {
+    position: fixed;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    z-index: 40;
+    opacity: 0;
+    color: var(--primary-color);
+    font-family: var(--font-family);
+    font-size: 14px;
+    font-style: italic;
+    text-transform: lowercase;
+    white-space: nowrap;
+    transform: translate(calc(var(--click-label-x, -100px) + 18px), calc(var(--click-label-y, -100px) - 8px));
+    transition: opacity 0.18s ease;
+}
+
+#click-cursor-label::before {
+    content: '';
+    margin-right: 8px;
+}
+
+#click-cursor-label::after {
+    content: '';
+    margin-left: 8px;
+}
+
+body.click-hint-cursor #click-cursor-label {
+    opacity: 1;
+}
+
+@keyframes clickLabelBob {
+    0%, 100% { transform: translate(-50%, calc(-100% - 14px)) translateY(0); }
+    50% { transform: translate(-50%, calc(-100% - 14px)) translateY(-6px); }
+}
+
 body::before {
     content: '';
     position: fixed;
@@ -138,7 +174,7 @@ canvas {
     overflow: auto;
     padding: 28px;
     background: var(--bg-color);
-    pointer-events: none;
+    pointer-events: auto;
     opacity: 1;
     transition: opacity 0.22s ease, width var(--ui-scale-transition), max-height var(--ui-scale-transition), padding var(--ui-scale-transition);
 }
@@ -286,10 +322,41 @@ canvas {
     transition: width var(--ui-scale-transition), margin-bottom var(--ui-scale-transition);
 }
 
-#game-logo {
+.page-indicator {
+    color: var(--primary-color);
+    font-family: var(--font-family);
+    font-size: 14px;
+    font-style: italic;
+    text-transform: lowercase;
+    letter-spacing: 0.02em;
+    line-height: 1.35;
+    text-align: center;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+}
+
+#page-indicator-index {
+    margin-bottom: 8px;
+}
+
+#game-logo-wrap {
     position: fixed;
-    bottom: 40px;
     right: 40px;
+    bottom: 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    z-index: 14;
+    transition: transform 0.4s ease;
+}
+
+#page-indicator-game {
+    pointer-events: none;
+}
+
+#game-logo {
+    position: static;
     width: 170px;
     height: auto;
     image-rendering: pixelated;
@@ -297,8 +364,7 @@ canvas {
     user-select: none;
     pointer-events: none;
     opacity: 0;
-    transition: opacity 0.5s ease, transform 0.4s ease, right var(--ui-scale-transition), bottom var(--ui-scale-transition), width var(--ui-scale-transition);
-    z-index: 14;
+    transition: opacity 0.5s ease, transform 0.4s ease, width var(--ui-scale-transition);
 }
 
 #game-logo.visible {
@@ -306,15 +372,34 @@ canvas {
     pointer-events: auto;
 }
 
+#page-indicator-game.visible {
+    opacity: 0;
+}
+
 #list a[aria-label="Open portfolio"] {
-    display: inline-block;
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
     transition: transform 0.4s ease;
 }
 
 #list a[aria-label="Open portfolio"]:hover,
-#game-logo:hover {
+#list a[aria-label="Open portfolio"]:focus-visible,
+#game-logo-wrap:hover,
+#game-logo-wrap:focus-within {
     transform: translateY(-5px);
     cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='6' height='6'%3E%3Ccircle cx='3' cy='3' r='3' fill='%233C2828'/%3E%3C/svg%3E") 3 3, pointer;
+}
+
+#list a[aria-label="Open portfolio"]:hover #page-indicator-index,
+#list a[aria-label="Open portfolio"]:focus-visible #page-indicator-index {
+    opacity: 1;
+}
+
+#game-logo-wrap:hover #page-indicator-game.visible,
+#game-logo-wrap:focus-within #page-indicator-game.visible {
+    opacity: 1;
 }
 
 #intro-text-window {
@@ -340,19 +425,133 @@ canvas {
     opacity: 1;
 }
 
-#intro-text-window-label {
+#intro-controls {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
     color: var(--primary-color);
-    font-family: var(--font-family);
-    font-size: 192px;
-    font-weight: 700;
-    line-height: 0.9;
-    max-width: calc(100vw - 240px);
-    white-space: pre-wrap;
     opacity: 0;
 }
 
-#intro-text-window-label.is-animating {
-    animation: introTextWindowFade 5s ease-in-out both;
+#intro-controls.is-animating {
+    animation: introTextWindowFade var(--intro-step-duration, 5s) ease-in-out both;
+}
+
+#intro-controls-hint {
+    font-family: var(--font-family);
+    font-size: 14px;
+    line-height: 1.4;
+    text-align: center;
+    text-transform: lowercase;
+    max-width: calc(100vw - 160px);
+    order: 2;
+}
+
+#intro-controls-arrows {
+    position: relative;
+    width: 320px;
+    height: 240px;
+    order: 1;
+}
+
+#intro-controls .intro-control-arrow {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary-color);
+    font-family: var(--font-family);
+    font-size: 100px;
+    font-weight: 700;
+    line-height: 1;
+    width: 1em;
+    height: 1em;
+    transform-origin: center;
+}
+
+#intro-controls .intro-control-arrow.top {
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    animation: introControlArrowTop 1s ease-in-out infinite;
+}
+
+#intro-controls .intro-control-arrow.right {
+    top: 72%;
+    right: 6%;
+    transform: translateY(-50%) rotate(90deg);
+    animation: introControlArrowRight 1s ease-in-out infinite;
+}
+
+#intro-controls .intro-control-arrow.bottom {
+    top: 72%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(180deg);
+    animation: introControlArrowBottom 1s ease-in-out infinite;
+}
+
+#intro-controls .intro-control-arrow.left {
+    top: 72%;
+    left: 6%;
+    transform: translateY(-50%) rotate(-90deg);
+    animation: introControlArrowLeft 1s ease-in-out infinite;
+}
+
+#intro-text-window[data-controls="mobile"] #intro-controls .intro-control-arrow {
+    opacity: 0;
+    animation: none;
+}
+
+#intro-text-window[data-controls="mobile"][data-step="turn"] #intro-controls .intro-control-arrow.left,
+#intro-text-window[data-controls="mobile"][data-step="turn"] #intro-controls .intro-control-arrow.right {
+    opacity: 1;
+    top: 50%;
+}
+
+#intro-text-window[data-controls="mobile"][data-step="turn"] #intro-controls {
+    gap: 8px;
+}
+
+#intro-text-window[data-controls="mobile"][data-step="turn"] #intro-controls-arrows {
+    height: 120px;
+}
+
+#intro-text-window[data-controls="mobile"][data-step="turn"] #intro-controls .intro-control-arrow.left {
+    left: 18%;
+    right: auto;
+    transform: translate(0, -50%) rotate(-90deg);
+    animation: introMobileTurnLeft 1s ease-in-out infinite;
+}
+
+#intro-text-window[data-controls="mobile"][data-step="turn"] #intro-controls .intro-control-arrow.right {
+    right: 18%;
+    left: auto;
+    transform: translate(0, -50%) rotate(90deg);
+    animation: introMobileTurnRight 1s ease-in-out infinite;
+}
+
+#intro-text-window[data-controls="mobile"][data-step="pinch"] #intro-controls .intro-control-arrow.top,
+#intro-text-window[data-controls="mobile"][data-step="pinch"] #intro-controls .intro-control-arrow.bottom {
+    opacity: 1;
+}
+
+#intro-text-window[data-controls="mobile"][data-step="pinch"] #intro-controls .intro-control-arrow.top {
+    top: 16%;
+    right: 18%;
+    left: auto;
+    bottom: auto;
+    transform: translate(0, 0) rotate(45deg);
+    animation: introMobilePinchTop 1s ease-in-out infinite;
+}
+
+#intro-text-window[data-controls="mobile"][data-step="pinch"] #intro-controls .intro-control-arrow.bottom {
+    top: 70%;
+    left: 18%;
+    right: auto;
+    bottom: auto;
+    transform: translate(0, 0) rotate(-135deg);
+    animation: introMobilePinchBottom 1s ease-in-out infinite;
 }
 
 @keyframes introTextWindowFade {
@@ -360,6 +559,46 @@ canvas {
     15% { opacity: 1; }
     85% { opacity: 1; }
     100% { opacity: 0; }
+}
+
+@keyframes introControlArrowTop {
+    0%, 100% { transform: translateX(-50%) translateY(0); }
+    50% { transform: translateX(-50%) translateY(-10px); }
+}
+
+@keyframes introControlArrowRight {
+    0%, 100% { transform: translateY(-50%) rotate(90deg) translateY(0); }
+    50% { transform: translateY(-50%) rotate(90deg) translateY(-10px); }
+}
+
+@keyframes introControlArrowBottom {
+    0%, 100% { transform: translate(-50%, -50%) rotate(180deg) translateY(0); }
+    50% { transform: translate(-50%, -50%) rotate(180deg) translateY(-10px); }
+}
+
+@keyframes introControlArrowLeft {
+    0%, 100% { transform: translateY(-50%) rotate(-90deg) translateY(0); }
+    50% { transform: translateY(-50%) rotate(-90deg) translateY(-10px); }
+}
+
+@keyframes introMobileTurnLeft {
+    0%, 100% { transform: translate(0, -50%) rotate(-90deg); }
+    50% { transform: translate(-10px, -50%) rotate(-90deg); }
+}
+
+@keyframes introMobileTurnRight {
+    0%, 100% { transform: translate(0, -50%) rotate(90deg); }
+    50% { transform: translate(10px, -50%) rotate(90deg); }
+}
+
+@keyframes introMobilePinchTop {
+    0%, 100% { transform: translate(0, 0) rotate(45deg); }
+    50% { transform: translate(-10px, 10px) rotate(45deg); }
+}
+
+@keyframes introMobilePinchBottom {
+    0%, 100% { transform: translate(0, 0) rotate(-135deg); }
+    50% { transform: translate(10px, -10px) rotate(-135deg); }
 }
 
 #idle-arrows {
@@ -597,14 +836,42 @@ canvas {
 }
 
 @media (max-width: 980px) and (orientation: portrait) {
+    #click-cursor-label::before,
+    #click-cursor-label::after {
+        content: '↓';
+    }
+
+    #click-prompt .click-arrow.left,
+    #click-prompt .click-arrow.right {
+        display: none;
+    }
+
     #click-prompt .click-arrow {
         font-size: 60px;
     }
 
-    #intro-text-window-label {
-        font-size: clamp(44px, 12vw, 96px);
-        max-width: calc(100vw - 96px);
-        line-height: 0.95;
+    #click-cursor-label {
+        top: 35%;
+        left: 50%;
+        transform: translate(-50%, calc(-100% - 14px));
+    }
+
+    body.click-hint-cursor #click-cursor-label {
+        animation: clickLabelBob 1s ease-in-out infinite;
+    }
+
+    #intro-controls-hint {
+        font-size: 12px;
+        max-width: calc(100vw - 48px);
+    }
+
+    #intro-controls-arrows {
+        width: 240px;
+        height: 190px;
+    }
+
+    #intro-controls .intro-control-arrow {
+        font-size: 60px;
     }
 
     #idle-arrows .idle-arrow {
@@ -642,7 +909,7 @@ canvas {
         right: 12px;
         bottom: 12px;
         max-width: calc(100vw - 24px);
-        font-size: 10px;
+        font-size: 12px;
     }
 
     #hud .hud-window {
@@ -652,7 +919,7 @@ canvas {
     }
 
     #hud .hud-window-text {
-        font-size: 10px;
+        font-size: 12px;
     }
 
     #hud .hud-window-name {
@@ -667,11 +934,11 @@ canvas {
         max-width: calc(100vw - 24px);
         max-height: calc(100vh - 24px);
         padding: 12px;
-        font-size: 10px;
+        font-size: 12px;
     }
 
     #list .list-line[data-alt]::before {
-        font-size: 10px;
+        font-size: 12px;
     }
 
     #list-logo {
@@ -679,13 +946,25 @@ canvas {
         margin-bottom: 10px;
     }
 
+    #page-indicator-index {
+        margin-bottom: 6px;
+    }
+
     #list .list-line {
         margin-top: 14px;
     }
 
-    #game-logo {
+    #game-logo-wrap {
         right: 24px;
         bottom: 24px;
+        gap: 4px;
+    }
+
+    #page-indicator-game {
+        font-size: 12px;
+    }
+
+    #game-logo {
         width: 102px;
     }
 
@@ -706,14 +985,42 @@ canvas {
 }
 
 @media (orientation: landscape) and (pointer: coarse) and (max-height: 600px) {
+    #click-cursor-label::before,
+    #click-cursor-label::after {
+        content: '↓';
+    }
+
+    #click-prompt .click-arrow.left,
+    #click-prompt .click-arrow.right {
+        display: none;
+    }
+
     #click-prompt .click-arrow {
         font-size: 60px;
     }
 
-    #intro-text-window-label {
-        font-size: clamp(38px, 7vw, 84px);
-        max-width: calc(100vw - 140px);
-        line-height: 0.95;
+    #click-cursor-label {
+        top: 35%;
+        left: 50%;
+        transform: translate(-50%, calc(-100% - 14px));
+    }
+
+    body.click-hint-cursor #click-cursor-label {
+        animation: clickLabelBob 1s ease-in-out infinite;
+    }
+
+    #intro-controls-hint {
+        font-size: 12px;
+        max-width: calc(100vw - 80px);
+    }
+
+    #intro-controls-arrows {
+        width: 220px;
+        height: 170px;
+    }
+
+    #intro-controls .intro-control-arrow {
+        font-size: 60px;
     }
 
     #idle-arrows .idle-arrow {
@@ -751,7 +1058,7 @@ canvas {
         right: 12px;
         bottom: 12px;
         max-width: min(45vw, 336px);
-        font-size: 10px;
+        font-size: 12px;
     }
 
     #hud .hud-window {
@@ -761,7 +1068,7 @@ canvas {
     }
 
     #hud .hud-window-text {
-        font-size: 9px;
+        font-size: 12px;
     }
 
     #hud .hud-window-name {
@@ -770,9 +1077,17 @@ canvas {
     }
 
     #game-logo {
+        width: 102px;
+    }
+
+    #game-logo-wrap {
         right: 24px;
         bottom: 24px;
-        width: 102px;
+        gap: 4px;
+    }
+
+    #page-indicator-game {
+        font-size: 12px;
     }
 
     #social-links {
@@ -789,4 +1104,22 @@ canvas {
         width: 8px;
         height: 8px;
     }
+}
+
+#hud .hud-social-links {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 10px 14px;
+    margin-top: 20px;
+}
+
+#hud .hud-social-links .social-link {
+    min-width: 24px;
+    min-height: 24px;
+}
+
+#hud .hud-social-links .social-link img {
+    width: 16px;
+    height: 16px;
 }
