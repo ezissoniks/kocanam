@@ -50,7 +50,7 @@ body.loaded {
     text-transform: lowercase;
     white-space: nowrap;
     transform: translate(calc(var(--click-label-x, -100px) + 18px), calc(var(--click-label-y, -100px) - 8px));
-    transition: opacity 0.18s ease;
+    transition: opacity 0.35s ease;
 }
 
 #click-cursor-label::before {
@@ -65,6 +65,10 @@ body.loaded {
 
 body.click-hint-cursor #click-cursor-label {
     opacity: 1;
+}
+
+body.click-hint-fading #click-cursor-label {
+    opacity: 0;
 }
 
 @keyframes clickLabelBob {
@@ -272,6 +276,24 @@ canvas {
 
     #hud .hud-window-text {
         font-size: 14px;
+    }
+
+    #hud .hud-window,
+    #hud .hud-window-text,
+    #hud .hud-window-name {
+        user-select: none;
+        -webkit-user-select: none;
+        -webkit-touch-callout: none;
+    }
+
+    #hud .hud-window-text,
+    #hud .hud-window-name {
+        pointer-events: none;
+    }
+
+    #hud .hud-window .hud-social-links,
+    #hud .hud-window .hud-social-links * {
+        pointer-events: auto;
     }
 
     #list {
@@ -706,6 +728,10 @@ canvas {
 
 #click-prompt.visible {
     opacity: 1;
+}
+
+#click-prompt.fading-out {
+    opacity: 0;
 }
 
 #click-prompt .click-arrow.top {

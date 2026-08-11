@@ -47,6 +47,7 @@ const INTRO_TEXT_WINDOW_MOBILE_STEP_MS = 2_500;
 const INTRO_TEXT_WINDOW_BG_FADE_MS = 450;
 const INTRO_AUTO_MOVE_DISTANCE = 1;
 const NAVIGATION_FADE_MS = 450;
+const CLICK_PROMPT_FADE_OUT_MS = 350;
 const INTRO_PROXIMITY_SCALE = 0.7;
 const MOBILE_ENTITY_SCALE = 0.7;
 const MOBILE_DPR_MIN = 2;
@@ -75,6 +76,7 @@ let introWindowStepIndex = 0;
 let introWindowReplayedOnLanguageToggle = false;
 let introWindowSkipAutoMoveOnce = false;
 let introAutoMoveRemaining = 0;
+let clickPromptFadeTimeout = null;
 let clickPromptDisabled = false;
 let clickPromptTargetId = null;
 let clickPromptStartedAt = 0;
@@ -120,8 +122,39 @@ window.addEventListener('pointermove', evt => {
 }, { passive: true });
 
 const setClickPromptVisible = isVisible => {
-  clickPrompt.classList.toggle('visible', isVisible);
-  document.body.classList.toggle('click-hint-cursor', isVisible);
+  if (isVisible) {
+    if (clickPromptFadeTimeout) {
+      clearTimeout(clickPromptFadeTimeout);
+      clickPromptFadeTimeout = null;
+    }
+    clickPrompt.classList.remove('fading-out');
+    document.body.classList.remove('click-hint-fading');
+    clickPrompt.classList.add('visible');
+    document.body.classList.add('click-hint-cursor');
+    return;
+  }
+
+  const isMobileHint = isIdleArrowsMobileContext();
+  const wasVisible = clickPrompt.classList.contains('visible') || document.body.classList.contains('click-hint-cursor');
+
+  if (isMobileHint && wasVisible) {
+    if (clickPromptFadeTimeout) return;
+    clickPrompt.classList.add('fading-out');
+    document.body.classList.add('click-hint-fading');
+    clickPromptFadeTimeout = setTimeout(() => {
+      clickPrompt.classList.remove('visible', 'fading-out');
+      document.body.classList.remove('click-hint-cursor', 'click-hint-fading');
+      clickPromptFadeTimeout = null;
+    }, CLICK_PROMPT_FADE_OUT_MS);
+    return;
+  }
+
+  if (clickPromptFadeTimeout) {
+    clearTimeout(clickPromptFadeTimeout);
+    clickPromptFadeTimeout = null;
+  }
+  clickPrompt.classList.remove('visible', 'fading-out');
+  document.body.classList.remove('click-hint-cursor', 'click-hint-fading');
 };
 
 const introTextWindow = document.createElement('div');
@@ -553,6 +586,18 @@ const handleArtworkInteraction = () => {
     showDetailsHud(currentArtwork);
   }
 };
+
+hud.addEventListener('pointerdown', evt => {
+  if (hud.dataset.details !== '1') return;
+  if (evt.target.closest('.social-link')) return;
+
+  evt.preventDefault();
+  evt.stopPropagation();
+
+  if (!currentArtwork?.id) return;
+  clearChildSprites(currentArtwork.id);
+  removeDetailsWindow();
+});
 
 function isIdleArrowsMobileContext() {
   const coarsePointer = window.matchMedia?.('(pointer: coarse)').matches;
