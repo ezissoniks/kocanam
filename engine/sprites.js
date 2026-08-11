@@ -128,7 +128,7 @@ const BASE_SPRITES = [
       { xOffset: -0.10, yOffset: 0.05, texture: 'textures/spuris.png', size: 0.28, heightScale: -0.1 },
       { xOffset: 0, yOffset: 0.07, texture: 'textures/spuldze_2023.png', size: 0.5, heightScale: 0 },
     ],
-    long_description: "SPULDZE ir ikgadējs Cēsu Valsts ğimnāzijas Skolēnu pašpārvalžu saliedēšanās pasākums, kura mērķis ir satikties ar citām pašpārvaldēm un pārrunāt aktualitātes un notikumus.",
+    long_description: "SPULDZE ir ikgadējs Cēsu Valsts ģimnāzijas Skolēnu pašpārvalžu saliedēšanās pasākums, kura mērķis ir satikties ar citām pašpārvaldēm un pārrunāt aktualitātes un notikumus.",
     long_description_en: "SPULDZE is an annual Cēsis State gymnasium student council event. The event cultivates Latvian student council experience exchange."
   },
 
