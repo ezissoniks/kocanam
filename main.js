@@ -31,7 +31,7 @@ const DETAILS_SOCIAL_LINKS = [
     external: false
   },
   {
-    href: 'https://www.instagram.com/ezissoniks/',
+    href: 'https://www.instagram.com/portfolio.kocan.am/',
     icon: 'textures/instagram.svg',
     label: 'Instagram',
     external: true
