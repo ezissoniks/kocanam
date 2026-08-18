@@ -37,6 +37,12 @@ const DETAILS_SOCIAL_LINKS = [
     external: true
   }
 ];
+
+DETAILS_SOCIAL_LINKS.forEach(link => {
+  const image = new Image();
+  image.src = link.icon;
+});
+
 const ARTWORK_HOLD_RADIUS_EXTRA = 0.3;
 const ARTWORK_SWITCH_DEBOUNCE_MS = 160;
 const ARTWORK_LOST_GRACE_MS = 240;

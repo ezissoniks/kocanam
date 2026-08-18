@@ -844,6 +844,10 @@ canvas {
     transition: gap var(--ui-scale-transition), margin-top var(--ui-scale-transition);
 }
 
+#list > a[aria-label="Open portfolio"] + #social-links {
+    margin-top: 20px;
+}
+
 .social-link {
     display: inline-flex;
     align-items: center;
