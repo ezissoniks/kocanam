@@ -1,24 +1,24 @@
 {
-  "rewrites": [
+  "routes": [
     {
-      "source": "/",
+      "src": "^/$",
       "has": [
         {
           "type": "host",
           "value": "portfolio.kocan.am"
         }
       ],
-      "destination": "/portfolio.html"
-    }
+      "dest": "/portfolio.html"
+    },
     {
-      "source": "/",
+      "src": "^/$",
       "has": [
         {
           "type": "host",
           "value": "apraksts.kocan.am"
         }
       ],
-      "destination": "/apraksts.html"
+      "dest": "/apraksts.html"
     }
   ]
 }
