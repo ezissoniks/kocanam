@@ -18,6 +18,8 @@ html {
     background: var(--bg-color);
 }
 
+
+
 body {
     width: 100vw;
     height: var(--app-height, 100vh);
@@ -404,7 +406,8 @@ canvas {
     opacity: 0;
 }
 
-#list a[aria-label="Open portfolio"] {
+#list a[aria-label="Open portfolio"],
+#list a.list-logo-link {
     display: inline-flex;
     flex-direction: column;
     align-items: center;
@@ -835,6 +838,19 @@ canvas {
     text-decoration: underline;
 }
 
+#list .about-text {
+    width: 400px;
+    align-self: center;
+    white-space: normal;
+}
+
+#list .about-head {
+    width: 400px;
+    font-size: 50px;
+    align-self: center;
+    white-space: normal;
+}
+
 #social-links {
     display: flex;
     flex-wrap: wrap;
@@ -852,16 +868,16 @@ canvas {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-width: 20px;
-    min-height: 30px;
+    min-width: 24px;
+    min-height: 36px;
     color: var(--primary-color);
     text-decoration: none;
     transition: transform 0.4s ease, min-width var(--ui-scale-transition), min-height var(--ui-scale-transition);
 }
 
 .social-link img {
-    width: 14px;
-    height: 14px;
+    width: 17px;
+    height: 17px;
     display: block;
     transition: width var(--ui-scale-transition), height var(--ui-scale-transition);
 }
@@ -977,9 +993,12 @@ canvas {
         font-size: 12px;
     }
 
-    #list-logo {
-        width: 120px;
-        margin-bottom: 10px;
+    #list .about-text {
+        width: 70vw;
+    }
+
+    #list .about-head {
+        width: 70vw;
     }
 
     #page-indicator-index {
@@ -1009,15 +1028,6 @@ canvas {
         margin-top: 24px;
     }
 
-    .social-link {
-        min-width: 12px;
-        min-height: 18px;
-    }
-
-    .social-link img {
-        width: 8px;
-        height: 8px;
-    }
 }
 
 @media (orientation: landscape) and (pointer: coarse) and (max-height: 600px) {
@@ -1132,13 +1142,13 @@ canvas {
     }
 
     .social-link {
-        min-width: 12px;
-        min-height: 18px;
+        min-width: 14.4px;
+        min-height: 21.6px;
     }
 
     .social-link img {
-        width: 8px;
-        height: 8px;
+        width: 9.6px;
+        height: 9.6px;
     }
 }
 
