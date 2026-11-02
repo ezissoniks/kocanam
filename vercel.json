@@ -10,5 +10,15 @@
       ],
       "destination": "/portfolio.html"
     }
+    {
+      "source": "/",
+      "has": [
+        {
+          "type": "host",
+          "value": "apraksts.kocan.am"
+        }
+      ],
+      "destination": "/apraksts.html"
+    }
   ]
 }
